@@ -105,7 +105,7 @@ func rollback(err_str string, session *xorm.Session) {
 func (handle *DBHandler) GetHomeData(platform int) *datastruct.ResponseHomeData {
 	engine := handle.mysqlEngine
 	ad := make([]*datastruct.AdInfo, 0)
-	err := engine.Where("(platform = ? or platform = ?) and is_hidden = 0 and location = ?", datastruct.H5+1, platform, datastruct.HomeAd).Desc("sort_id").Find(&ad)
+	err := engine.Where("(platform = ? or platform = ?) and is_hidden = 0", datastruct.H5+1, platform).Desc("sort_id").Find(&ad)
 	if err != nil {
 		log.Debug("GetHomeData err:%s", err.Error())
 		return nil
