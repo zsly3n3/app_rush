@@ -155,14 +155,14 @@ func checkVersion(c *gin.Context, eventHandler *event.EventHandler) bool {
 		})
 		return false
 	}
-	isPcInfo, tf := c.Request.Header["Ispc"]
-	if tf && isPcInfo[0] == "1" {
-		c.JSON(200, gin.H{
-			"code": datastruct.AppRedirect,
-			"data": eventHandler.GetPCRedirect(),
-		})
-		return false
-	}
+	// isPcInfo, tf := c.Request.Header["Ispc"]
+	// if tf && isPcInfo[0] == "1" {
+	// 	c.JSON(200, gin.H{
+	// 		"code": datastruct.AppRedirect,
+	// 		"data": eventHandler.GetPCRedirect(),
+	// 	})
+	// 	return false
+	// }
 	version, isExist := c.Request.Header["Appversion"]
 	if isExist && version[0] == serverVersion {
 		return true
