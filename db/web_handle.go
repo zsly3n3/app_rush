@@ -2543,13 +2543,12 @@ func (handle *DBHandler) EditUserAppraise(body *datastruct.WebEditUserAppraiseBo
 			rollback("DBHandler->EditUserAppraise DeleteGoodsImgs err:"+err.Error(), session)
 			return datastruct.UpdateDataFailed
 		}
-		_, err = session.Where("id=?", body.Id).Cols("goods_type", "user_id", "desc", "show_type", "goods_id", "is_passed").Update(uap)
+		_, err = session.Where("id=?", body.Id).Cols("goods_type", "user_id", "desc", "show_type", "goods_id", "is_passed", "created_at").Update(uap)
 		if err != nil {
 			rollback("DBHandler->EditUserAppraise Update err:"+err.Error(), session)
 			return datastruct.UpdateDataFailed
 		}
 	} else {
-		uap.CreatedAt = time.Now().Unix()
 		_, err = session.Insert(uap)
 		if err != nil {
 			rollback("DBHandler->EditUserAppraise Insert err:"+err.Error(), session)
