@@ -2465,6 +2465,7 @@ func (handle *DBHandler) EditUserAppraise(body *datastruct.WebEditUserAppraiseBo
 	uap.IsPassed = body.IsPassed
 	uap.UserId = body.UserId
 	uap.GoodsType = body.GoodsType
+	uap.CreatedAt = body.TimeStamp
 	session := engine.NewSession()
 	defer session.Close()
 	session.Begin()

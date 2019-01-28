@@ -9,7 +9,7 @@ const NULLID = -1
 type UserInfo struct {
 	Id                   int      `xorm:"not null pk autoincr INT(11)"`     //自增id
 	NickName             string   `xorm:"VARCHAR(255) not null"`            //昵称
-	Avatar               string   `xorm:"VARCHAR(255) not null"`            //头像
+	Avatar               string   `xorm:"VARCHAR(500) not null"`            //头像
 	Sex                  int      `xorm:"TINYINT(1) not null"`              //1为男,2为女
 	IsCheat              int      `xorm:"not null INT(11)"`                 //是否作弊,默认为0
 	LotterySucceed       int      `xorm:"not null INT(11)"`                 //中奖次数

@@ -405,7 +405,7 @@ func (handle *EventHandler) UpdateSharePosterState(c *gin.Context) datastruct.Co
 func (handle *EventHandler) EditUserAppraise(c *gin.Context) datastruct.CodeType {
 	var body datastruct.WebEditUserAppraiseBody
 	err := c.BindJSON(&body)
-	if err != nil || body.GoodsType < 0 || (body.Desc == "" && len(body.ImgNames) == 0) || body.Id < 0 || body.UserId < 0 || body.GoodsId < 0 || body.IsPassed < 0 || body.IsPassed > 1 {
+	if err != nil || body.GoodsType < 0 || (body.Desc == "" && len(body.ImgNames) == 0) || body.Id < 0 || body.UserId < 0 || body.GoodsId < 0 || body.IsPassed < 0 || body.IsPassed > 1 || body.TimeStamp <= 0 {
 		return datastruct.ParamError
 	}
 	return handle.dbHandler.EditUserAppraise(&body, commondata.OSSBucket)

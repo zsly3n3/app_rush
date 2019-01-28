@@ -293,6 +293,7 @@ type WebEditUserAppraiseBody struct {
 	GoodsId   int           `json:"goodsid"`
 	IsPassed  int           `json:"ispassed"`
 	GoodsType GoodsDataType `json:"goodstype"`
+	TimeStamp int64         `json:"timestamp"`
 }
 
 type WebDeleteUserAppraiseBody struct {
