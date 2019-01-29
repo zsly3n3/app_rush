@@ -2672,7 +2672,7 @@ func (handle *DBHandler) GetUserAppraise(body *datastruct.WebQueryUserAppraiseBo
 	strTotal := string(results[0]["count(*)"][:])
 	currentTotal := tools.StringToInt64(strTotal)
 
-	orderby := " ORDER BY uap.id desc"
+	orderby := " ORDER BY uap.created_at desc"
 	results, _ = engine.Query(sql + query + orderby + limitStr)
 	list := make([]*datastruct.WebUserAppraise, 0, len(results))
 	for _, v := range results {

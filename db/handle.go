@@ -2241,7 +2241,7 @@ func (handle *DBHandler) GetUserAppraiseForApp(pageIndex int, pageSize int) (int
 	limit := pageSize
 
 	limitStr := fmt.Sprintf(" LIMIT %d,%d", start, limit)
-	orderby := " ORDER BY uap.id desc"
+	orderby := " ORDER BY uap.created_at desc"
 
 	sql := "select uap.goods_type,uap.id,uap.show_type,uap.desc,u.nick_name,u.avatar,g.name as gname,rlg.name as rlgname,uap.created_at from user_appraise uap inner join user_info u on u.id = uap.user_id left join goods g on uap.goods_id = g.id left join random_lottery_goods rlg on uap.goods_id = rlg.id where is_passed = 1" + orderby + limitStr
 
