@@ -1256,7 +1256,11 @@ func (handle *DBHandler) GetUserInfo(userId int, platform datastruct.Platform) (
 	appraiseAd.GoldCount = gcg.AppraisedGoldGift
 
 	registerGift := new(datastruct.RegisterGift)
-	registerGift.IsGotRegisterGift = user.IsGotRegisterGift
+	if gcg.IsEnableRegisterGift == 0 {
+		registerGift.IsGotRegisterGift = 1
+	} else {
+		registerGift.IsGotRegisterGift = user.IsGotRegisterGift
+	}
 	registerGift.GoldCount = gcg.RegisterGoldGift
 
 	resp.DLQCount = DLQCount
