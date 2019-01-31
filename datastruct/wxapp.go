@@ -1,9 +1,10 @@
 package datastruct
 
-// const WX_GZH_AppID = "wxe8d884b6dda2b66c"
-// const WX_GZH_AppSecret = "467ef3ffa7cdef9421f5d7d496638815"
-const WX_GZH_AppID = "wx13e6fb35591e298a"                   //deleted
-const WX_GZH_AppSecret = "b02d5d4672a692029b86f844c51bd301" //deleted
+const WX_GZH_AppID = "wxe8d884b6dda2b66c"
+const WX_GZH_AppSecret = "467ef3ffa7cdef9421f5d7d496638815"
+
+// const WX_GZH_AppID = "wx13e6fb35591e298a"                   //deleted
+// const WX_GZH_AppSecret = "b02d5d4672a692029b86f844c51bd301" //deleted
 
 const WX_GZH_Mch_Id = "1519982251" //公众号中微信商户号
 const WX_GZH_PaySecret = "ASDIOVBLJMKJ213dNBAS23sas123saqw"
