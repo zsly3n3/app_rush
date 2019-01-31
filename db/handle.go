@@ -1922,7 +1922,7 @@ func (handle *DBHandler) PurchaseVipSuccess(userId int, vipId int, createTime in
 	session.Begin()
 	user := new(datastruct.UserInfo)
 	user.MemberIdentifier = tools.IntToString(m_data.Id)
-	_, err = session.Cols("member_identifier").Update(user)
+	_, err = session.Cols("member_identifier").Where("id=?", userId).Update(user)
 	if err != nil {
 		str := fmt.Sprintf("DBHandler->PurchaseVipSuccess update UserInfo :%s", err.Error())
 		rollback(str, session)
