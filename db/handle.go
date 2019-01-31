@@ -146,7 +146,7 @@ func (handle *DBHandler) GetGoods(pageIndex int, pageSize int, classid int) []*d
 		results, _ := engine.Query(sql, v.Goods.Id, avatarCount)
 		avatar := make([]string, 0, len(results))
 		for _, v := range results {
-			avatar = append(avatar, string(v["avatar"][:])+datastruct.TmpAvatarPostfix)
+			avatar = append(avatar, string(v["avatar"][:]))
 		}
 		resp_good.Avatar = avatar
 		resp_good.ImgUrl = tools.CreateGoodsImgUrl(v.Goods.ImgName)
@@ -2445,7 +2445,7 @@ func (handle *DBHandler) GetGoodsDetailForApp(goodsid int) (interface{}, datastr
 	}
 	for _, v := range results {
 		tmpUser := new(datastruct.TmpUser)
-		tmpUser.Avatar = string(v["avatar"][:]) + datastruct.TmpAvatarPostfix
+		tmpUser.Avatar = string(v["avatar"][:])
 		tmpUser.NickName = string(v["nick_name"][:])
 		tmpUser.Desc = fmt.Sprintf("已获得%s*1", rs_query.Goods.Name)
 		tmpUsers = append(tmpUsers, tmpUser)
@@ -2512,7 +2512,6 @@ func (handle *DBHandler) GetGoodsDetailForApp(goodsid int) (interface{}, datastr
 		}
 		userAppraise.ImgUrls = imgurls
 	}
-
 	goodsDetailAppraise.UserAppraise = userAppraise
 	resp := new(datastruct.ResponseGoodsDetail)
 	resp.GoodsCover = goods_cover
