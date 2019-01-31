@@ -1555,7 +1555,7 @@ func (handle *DBHandler) GetEntryUrl() string {
 	if err != nil || !has {
 		return ""
 	}
-	return "http://" + entry.Url + ":8008"
+	return "https://" + entry.Url + "/invite"
 }
 
 func (handle *DBHandler) GetEntryPageUrl() string {
