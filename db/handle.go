@@ -2479,7 +2479,7 @@ func (handle *DBHandler) GetGoodsDetailForApp(goodsid int) (interface{}, datastr
 
 	appraiseLimit := 1
 
-	sql = "select uap.goods_type,uap.id,avatar,nick_name,uap.desc,show_type,uap.created_at,g.name as gname,rlg.name as rlgname from user_appraise uap inner join user_info u on uap.user_id=u.id left join goods g on g.id = uap.goods_id left join random_lottery_goods rlg on uap.goods_id = rlg.id where is_passed = 1 order by uap.id desc limit ?"
+	sql = "select uap.goods_type,uap.id,avatar,nick_name,uap.desc,show_type,uap.created_at,g.name as gname,rlg.name as rlgname from user_appraise uap inner join user_info u on uap.user_id=u.id left join goods g on g.id = uap.goods_id left join random_lottery_goods rlg on uap.goods_id = rlg.id where is_passed = 1 order by uap.created_at desc limit ?"
 	results, err = engine.Query(sql, appraiseLimit)
 	if err != nil || len(results) <= 0 {
 		log.Debug("GetGoodsDetailForApp Query5 err")
