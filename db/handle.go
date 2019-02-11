@@ -41,6 +41,8 @@ func (handle *DBHandler) GetUserDataFromDataBase(userId int) *datastruct.UserInf
 	engine := handle.mysqlEngine
 	u_info := new(datastruct.UserInfo)
 	engine.Where("id=?", userId).Get(u_info)
+	u_info.LoginTime = time.Now().Unix()
+	engine.Where("id=?", userId).Cols("login_time").Update(u_info)
 	return u_info
 }
 
