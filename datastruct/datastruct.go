@@ -12,7 +12,7 @@ const MaxTimeOutForLotteryQueue = 8 //最大排队等待时间
 const DefaultId = 1
 
 const EXPIRETIME = 300    //Redis过期时间300秒
-const WXOrderMaxSec = 400 //微信订单5分钟超时，这里设置400秒过期
+const WXOrderMaxSec = 600 //微信订单5分钟超时，这里设置600秒过期
 const GameStateAdd = 10   //暂时没用到
 const UserIdStart = 39834039
 

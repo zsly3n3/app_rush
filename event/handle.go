@@ -370,6 +370,7 @@ func (handle *EventHandler) Purchase(userId int, purchaseType datastruct.Purchas
 	}
 	resp_wx_pay, err := thirdParty.WXunifyChargeReq(wx_pay, ip_addr)
 	if err != nil {
+		log.Error("WXunifyChargeReq err:%v", err.Error())
 		return nil, datastruct.DepositFailed
 	}
 	var rs_interface interface{}
@@ -478,14 +479,14 @@ func (handle *EventHandler) WxPayResultCall(c *gin.Context) {
 				"return_msg":  "OK",
 			})
 		} else {
-			log.Debug("WXpayCalcSign:----------FAIL")
+			log.Error("WxPayResultCall WXpayCalcSign err")
 			c.XML(200, gin.H{
 				"return_code": "FAIL",
 				"return_msg":  "OK",
 			})
 		}
 	} else {
-		log.Debug("WXpayCalcSign FAIL:%s", err.Error())
+		log.Error("WxPayResultCall BindXML ERR:%s", err.Error())
 		c.XML(200, gin.H{
 			"return_code": "FAIL",
 			"return_msg":  "OK",

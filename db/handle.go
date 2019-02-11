@@ -101,6 +101,11 @@ func rollback(err_str string, session *xorm.Session) {
 	session.Rollback()
 }
 
+func rollbackError(err_str string, session *xorm.Session) {
+	log.Error("will rollback,err_str:%v", err_str)
+	session.Rollback()
+}
+
 //data
 func (handle *DBHandler) GetHomeData(platform int) *datastruct.ResponseHomeData {
 	engine := handle.mysqlEngine
@@ -591,7 +596,7 @@ func (handle *DBHandler) PurchaseSuccess(userId int, goodsid int, createTime int
 	_, err := session.Id(goodsid).Get(goods)
 	if err != nil {
 		str := fmt.Sprintf("DBHandler->Purchase GetGoods :%s", err.Error())
-		rollback(str, session)
+		rollbackError(str, session)
 		return datastruct.GetDataFailed
 	}
 
@@ -599,21 +604,21 @@ func (handle *DBHandler) PurchaseSuccess(userId int, goodsid int, createTime int
 	res, err1 := session.Exec(sql, float64(goods.Price), userId)
 	affected, err2 := res.RowsAffected()
 	if err1 != nil || err2 != nil || affected <= 0 {
-		rollback("DBHandler->PurchaseSuccess UpdateUser", session)
+		rollbackError("DBHandler->PurchaseSuccess UpdateUser", session)
 		return datastruct.UpdateDataFailed
 	}
 
 	//创建订单
 	err = createOrderData(session, userId, goodsid, createTime, true, platform)
 	if err != nil {
-		rollback(err.Error(), session)
+		rollbackError(err.Error(), session)
 		return datastruct.GetDataFailed
 	}
 
 	err = session.Commit()
 	if err != nil {
 		str := fmt.Sprintf("DBHandler->Purchase Commit :%s", err.Error())
-		rollback(str, session)
+		rollbackError(str, session)
 		return datastruct.GetDataFailed
 	}
 
@@ -625,7 +630,7 @@ func (handle *DBHandler) GetGoodsPrice(goodsid int) (*datastruct.Goods, datastru
 	goods := new(datastruct.Goods)
 	has, err := engine.Id(goodsid).Get(goods)
 	if err != nil || !has {
-		log.Debug("DBHandler->GetGoodsPrice err")
+		log.Error("DBHandler->GetGoodsPrice err")
 		return nil, datastruct.GetDataFailed
 	}
 	return goods, datastruct.NULLError
@@ -833,7 +838,7 @@ func (handle *DBHandler) DepositSucceed(userId int, money int64, platform datast
 	has, err := session.Where("id = ?", userId).Get(user)
 	if err != nil || !has {
 		str := fmt.Sprintf("DBHandler->DepositSucceed Get UserInfo err")
-		rollback(str, session)
+		rollbackError(str, session)
 		return -1, datastruct.DepositFailed
 	}
 	user.GoldCount += money
@@ -841,7 +846,7 @@ func (handle *DBHandler) DepositSucceed(userId int, money int64, platform datast
 	affected, err := session.Id(userId).Cols("gold_count", "deposit_total").Update(user)
 	if err != nil || affected <= 0 {
 		str := fmt.Sprintf("DBHandler->DepositSucceed Update Gold err")
-		rollback(str, session)
+		rollbackError(str, session)
 		return -1, datastruct.DepositFailed
 	}
 
@@ -854,7 +859,7 @@ func (handle *DBHandler) DepositSucceed(userId int, money int64, platform datast
 	_, err = session.Insert(goldChangeInfo)
 	if err != nil {
 		str := fmt.Sprintf("DBHandler->DepositSucceed Insert GoldChangeInfo :%s", err.Error())
-		rollback(str, session)
+		rollbackError(str, session)
 		return -1, datastruct.DepositFailed
 	}
 
@@ -867,7 +872,7 @@ func (handle *DBHandler) DepositSucceed(userId int, money int64, platform datast
 	_, err = session.Insert(userDepositInfo)
 	if err != nil {
 		str := fmt.Sprintf("DBHandler->DepositSucceed Insert UserDepositInfo :%s", err.Error())
-		rollback(str, session)
+		rollbackError(str, session)
 		return -1, datastruct.DepositFailed
 	}
 
@@ -875,21 +880,21 @@ func (handle *DBHandler) DepositSucceed(userId int, money int64, platform datast
 	receiver, err = agencyEarn(userDepositInfo.Id, userId, datastruct.AgentLevel1, money, userId, now_time, session)
 	if err != nil {
 		str := fmt.Sprintf("DBHandler->DepositSucceed Insert DepositInfo level_1 :%s", err.Error())
-		rollback(str, session)
+		rollbackError(str, session)
 		return -1, datastruct.DepositFailed
 	}
 	if receiver > 0 {
 		receiver, err = agencyEarn(userDepositInfo.Id, receiver, datastruct.AgentLevel2, money, userId, now_time, session)
 		if err != nil {
 			str := fmt.Sprintf("DBHandler->DepositSucceed Insert DepositInfo level_2:%s", err.Error())
-			rollback(str, session)
+			rollbackError(str, session)
 			return -1, datastruct.DepositFailed
 		}
 		if receiver > 0 {
 			receiver, err = agencyEarn(userDepositInfo.Id, receiver, datastruct.AgentLevel3, money, userId, now_time, session)
 			if err != nil {
 				str := fmt.Sprintf("DBHandler->DepositSucceed Insert DepositInfo level_3:%s", err.Error())
-				rollback(str, session)
+				rollbackError(str, session)
 				return -1, datastruct.DepositFailed
 			}
 		}
@@ -897,7 +902,7 @@ func (handle *DBHandler) DepositSucceed(userId int, money int64, platform datast
 	err = session.Commit()
 	if err != nil {
 		str := fmt.Sprintf("DBHandler->DepositSucceed Commit :%s", err.Error())
-		rollback(str, session)
+		rollbackError(str, session)
 		return -1, datastruct.DepositFailed
 	}
 	return user.GoldCount, datastruct.NULLError
@@ -1308,7 +1313,7 @@ func (handle *DBHandler) GetOpenId(userId int) (*datastruct.WXPlatform, datastru
 	engine := handle.mysqlEngine
 	has, err := engine.Where("user_id=?", userId).Get(wx_user)
 	if err != nil || !has {
-		log.Debug("GetGoldInfo GetWXPlatform err")
+		log.Error("GetOpenId GetWXPlatform err")
 		return nil, datastruct.GetDataFailed
 	}
 	return wx_user, datastruct.NULLError
@@ -1881,7 +1886,7 @@ func (handle *DBHandler) QueryMemberLevelData(m_id int) (*datastruct.MemberLevel
 	m_data := new(datastruct.MemberLevelData)
 	has, err := engine.Where("id=?", m_id).Get(m_data)
 	if err != nil || !has {
-		log.Debug("-----QueryMemberLevelData err")
+		log.Error("-----QueryMemberLevelData err")
 		return nil, datastruct.GetDataFailed
 	}
 	return m_data, datastruct.NULLError
@@ -1892,6 +1897,7 @@ func (handle *DBHandler) IsRefreshMemberList(userId int, level int) datastruct.C
 	user := new(datastruct.UserInfo)
 	has, err := engine.Where("id=?", userId).Get(user)
 	if err != nil || !has {
+		log.Error("-----IsRefreshMemberList err")
 		return datastruct.GetDataFailed
 	}
 	if user.MemberIdentifier == datastruct.AgencyIdentifier {
@@ -1914,6 +1920,7 @@ func (handle *DBHandler) PurchaseVipSuccess(userId int, vipId int, createTime in
 	m_data := new(datastruct.MemberLevelData)
 	has, err := engine.Where("id=?", vipId).Get(m_data)
 	if err != nil || !has {
+		log.Error("PurchaseVipSuccess Get MemberLevelData err")
 		return datastruct.GetDataFailed
 	}
 
@@ -1925,7 +1932,7 @@ func (handle *DBHandler) PurchaseVipSuccess(userId int, vipId int, createTime in
 	_, err = session.Cols("member_identifier").Where("id=?", userId).Update(user)
 	if err != nil {
 		str := fmt.Sprintf("DBHandler->PurchaseVipSuccess update UserInfo :%s", err.Error())
-		rollback(str, session)
+		rollbackError(str, session)
 		return datastruct.UpdateDataFailed
 	}
 	m_order := new(datastruct.MemberLevelOrder)
@@ -1935,13 +1942,13 @@ func (handle *DBHandler) PurchaseVipSuccess(userId int, vipId int, createTime in
 	var affected int64
 	affected, err = session.Insert(m_order)
 	if err != nil || affected <= 0 {
-		rollback("DBHandler->PurchaseVipSuccess Insert MemberLevelOrder err", session)
+		rollbackError("DBHandler->PurchaseVipSuccess Insert MemberLevelOrder err", session)
 		return datastruct.UpdateDataFailed
 	}
 	err = session.Commit()
 	if err != nil {
 		str := fmt.Sprintf("DBHandler->PurchaseVipSuccess Commit :%s", err.Error())
-		rollback(str, session)
+		rollbackError(str, session)
 		return datastruct.UpdateDataFailed
 	}
 	return datastruct.NULLError

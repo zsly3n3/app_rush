@@ -59,6 +59,7 @@ func (handle *CACHEHandler) CreateOrderForm(pay *datastruct.OrderForm) datastruc
 	defer conn.Close()
 	value, isError := tools.InterfaceToString(pay)
 	if isError {
+		log.Error("CreateOrderForm InterfaceToString err")
 		return datastruct.UpdateDataFailed
 	}
 	conn.Send("MULTI")
@@ -66,7 +67,7 @@ func (handle *CACHEHandler) CreateOrderForm(pay *datastruct.OrderForm) datastruc
 	conn.Send("expire", pay.Id, datastruct.WXOrderMaxSec)
 	_, err := conn.Do("EXEC")
 	if err != nil {
-		log.Debug("CreateOrderForm payInfo:%v err:%s", pay, err.Error())
+		log.Error("CreateOrderForm payInfo:%v err:%s", pay, err.Error())
 		return datastruct.UpdateDataFailed
 	}
 	return datastruct.NULLError
@@ -78,10 +79,12 @@ func (handle *CACHEHandler) GetPayData(payId string) (*datastruct.OrderForm, dat
 	defer conn.Close()
 	value, err := redis.String(conn.Do("get", payId))
 	if err != nil || value == "" {
+		log.Error("GetPayData payId:%v err", payId)
 		return nil, datastruct.GetDataFailed
 	}
 	pay, isError := tools.BytesToOrderForm([]byte(value))
 	if isError {
+		log.Error("GetPayData BytesToOrderForm err")
 		return nil, datastruct.GetDataFailed
 	}
 	return pay, datastruct.NULLError
