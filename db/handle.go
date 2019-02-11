@@ -34,6 +34,8 @@ func (handle *DBHandler) GetUserDataWithToken(token string) (*datastruct.UserInf
 	if err != nil || !has {
 		return nil, false
 	}
+	sql := "update user_info set login_time = ? where token = ?"
+	engine.Exec(sql, time.Now().Unix(), token)
 	return u_data, true
 }
 
@@ -42,13 +44,8 @@ func (handle *DBHandler) GetUserDataFromDataBase(userId int) *datastruct.UserInf
 	u_info := new(datastruct.UserInfo)
 	engine.Where("id=?", userId).Get(u_info)
 
-	update_user := new(datastruct.UserInfo)
-	update_user.LoginTime = time.Now().Unix()
-	_, err := engine.Where("id=?", userId).Cols("login_time").Update(update_user)
-	if err != nil {
-		log.Error("GetUserDataFromDataBase Update LoginTime err:%v", err.Error())
-	}
-
+	sql := "update user_info set login_time = ? where id = ?"
+	engine.Exec(sql, time.Now().Unix(), userId)
 	return u_info
 }
 
