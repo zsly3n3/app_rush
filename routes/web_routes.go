@@ -732,6 +732,22 @@ func getWebStatistics(r *gin.Engine, eventHandler *event.EventHandler) {
 	})
 }
 
+func getActiveUsers(r *gin.Engine, eventHandler *event.EventHandler) {
+	r.POST("/web/activeUsers", func(c *gin.Context) {
+		data, code := eventHandler.GetActiveUsers(c)
+		if code == datastruct.NULLError {
+			c.JSON(200, gin.H{
+				"code": code,
+				"data": data,
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"code": code,
+			})
+		}
+	})
+}
+
 func editReClass(r *gin.Engine, eventHandler *event.EventHandler) {
 	r.POST("/web/editreclass", func(c *gin.Context) {
 		// data1, _ := ioutil.ReadAll(c.Request.Body)
@@ -1124,4 +1140,5 @@ func WebRegister(r *gin.Engine, eventHandler *event.EventHandler) {
 	editAd(r, eventHandler)
 	getGoldCoinGift(r, eventHandler)
 	editGoldCoinGift(r, eventHandler)
+	getActiveUsers(r, eventHandler)
 }

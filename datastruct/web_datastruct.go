@@ -225,6 +225,12 @@ type WebNewsUserBody struct {
 	PayPlatform Platform `json:"payplatform"`
 }
 
+type WebActiveUserBody struct {
+	StartTime int64    `json:"starttime"`
+	EndTime   int64    `json:"endtime"`
+	RPlatform Platform `json:"registerplatform"`
+}
+
 type WebMemberOrderBody struct {
 	Name      string `json:"nickname"`
 	LevelName string `json:"levelname"`
@@ -613,8 +619,13 @@ type WebResponseStatistics struct {
 	DepositAmount    float64 `json:"depositamount"`    //充值总金额
 	UsersForPay      int     `json:"usersforpay"`      //付费总用户数
 	UserPayAmount    float64 `json:"payamount"`        //付费总金额
-	ActiveUsers      int64   `json:"activeusers"`      //活跃用户数
 	Date             string  `json:"date"`             //日期
+}
+
+type WebResponseActiveUsers struct {
+	NewUsers    int64  `json:"newusers"`    //新用户数
+	ActiveUsers int64  `json:"activeusers"` //活跃用户数
+	Date        string `json:"date"`        //日期
 }
 
 type WebResponseGoodsClass struct {
