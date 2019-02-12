@@ -613,6 +613,7 @@ type WebResponseStatistics struct {
 	DepositAmount    float64 `json:"depositamount"`    //充值总金额
 	UsersForPay      int     `json:"usersforpay"`      //付费总用户数
 	UserPayAmount    float64 `json:"payamount"`        //付费总金额
+	ActiveUsers      int64   `json:"activeusers"`      //活跃用户数
 	Date             string  `json:"date"`             //日期
 }
 

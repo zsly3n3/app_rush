@@ -2200,6 +2200,11 @@ func (handle *DBHandler) WebStatistics(body *datastruct.WebNewsUserBody) (interf
 	str_sum = string(results[0]["sum(udi.money)"][:])
 	deposit_amount := tools.StringToFloat64(str_sum)
 
+	activeUserSql := "select count(*) from user_info where created_at>= ? and created_at < ?" + queryRegisterUser + queryPayUser
+	results, _ = engine.Query(activeUserSql, body.StartTime, body.EndTime)
+	strTotal := string(results[0]["count(*)"][:])
+	activeUsers := tools.StringToInt64(strTotal)
+
 	statistics := new(datastruct.WebResponseStatistics)
 	statistics.AgentPayRate = rs
 	statistics.GrowthCount = total
@@ -2210,6 +2215,7 @@ func (handle *DBHandler) WebStatistics(body *datastruct.WebNewsUserBody) (interf
 	statistics.UsersForPay = purchase_users + deposit_users
 	statistics.UserPayAmount = float64(purchase_amount) + deposit_amount
 	statistics.Date = tools.UnixToString(body.StartTime, "2006-01-02")
+	statistics.ActiveUsers = activeUsers
 	return statistics, datastruct.NULLError
 }
 
