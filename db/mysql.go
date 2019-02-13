@@ -114,7 +114,7 @@ func SyncDB(engine *xorm.Engine) {
 	// errhandle(err)
 	webUser := createLoginData(1)
 	_, err = engine.Insert(&webUser)
-	// errhandle(err)
+	errhandle(err)
 }
 
 func createRoleData() []datastruct.Role {
