@@ -3211,13 +3211,17 @@ func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody)
 	web_user.Pwd = body.Pwd
 	web_user.UpdatedAt = now_time
 	var err error
+	var user_id int
 	if !isUpdate {
 		web_user.CreatedAt = now_time
 		web_user.RoleId = datastruct.NormalLevelID
 		web_user.Token = tools.UniqueId()
 		_, err = session.Insert(web_user)
+		user_id = web_user.Id
 	} else {
-		_, err = session.Where("id=?", body.Id).Cols("name", "login_name", "pwd", "updated_at").Update(web_user)
+		user_id = body.Id
+		_, err = session.Where("id=?", user_id).Cols("name", "login_name", "pwd", "updated_at").Update(web_user)
+
 	}
 	if err != nil {
 		str := fmt.Sprintf("EditPermissionUser err0:%s", err.Error())
@@ -3225,7 +3229,7 @@ func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody)
 		return datastruct.UpdateDataFailed
 	}
 	permission := new(datastruct.WebPermission)
-	_, err = session.Where("user_id=?", body.Id).Delete(permission)
+	_, err = session.Where("user_id=?", user_id).Delete(permission)
 	if err != nil {
 		str := fmt.Sprintf("EditPermissionUser err1:%s", err.Error())
 		rollbackError(str, session)
@@ -3233,7 +3237,7 @@ func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody)
 	}
 	for _, v := range body.PermissionIds {
 		permission := new(datastruct.WebPermission)
-		permission.UserId = body.Id
+		permission.UserId = user_id
 		permission.SecondaryId = v
 		_, err = session.Insert(permission)
 		if err != nil {
