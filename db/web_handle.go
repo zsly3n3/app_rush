@@ -30,7 +30,26 @@ func (handle *DBHandler) WebLogin(body *datastruct.WebLoginBody) (interface{}, d
 	if user.RoleId == datastruct.AdminLevelID {
 		permission = getAllMenu(engine)
 	} else {
-
+		// permission := make([]*datastruct.MasterInfo, 0)
+		// webPermission := make([]*datastruct.WebPermission, 0)
+		// engine.Where("user_id=?", user.Id).Asc("secondary_id").Find(&webPermission)
+		// for _, v := range webPermission {
+		// 	v.SecondaryId
+		// 	m_info := new(datastruct.MasterInfo)
+		// 	// m_info.MasterId = v.
+		// 	// // m_info.Name = v.Name
+		// 	// secondary := make([]*datastruct.SecondaryInfo, 0)
+		// 	// secondary_menu := make([]*datastruct.SecondaryMenu, 0, 40)
+		// 	// engine.Where("master_id=?", m_info.MasterId).Asc("id").Find(&secondary_menu)
+		// 	// for _, v := range secondary_menu {
+		// 	// 	secondaryInfo := new(datastruct.SecondaryInfo)
+		// 	// 	secondaryInfo.Name = v.Name
+		// 	// 	secondaryInfo.SecondaryId = v.Id
+		// 	// 	secondary = append(secondary, secondaryInfo)
+		// 	// }
+		// 	// m_info.Secondary = secondary
+		// 	// permission = append(permission, m_info)
+		// }
 	}
 	p_user.Permission = permission
 	return p_user, datastruct.NULLError
