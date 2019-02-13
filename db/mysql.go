@@ -59,7 +59,7 @@ func SyncDB(engine *xorm.Engine) {
 	// arr = append(arr, new(datastruct.DepositParams))
 	//arr = append(arr, new(datastruct.GoldChangeInfo))
 	// arr = append(arr, new(datastruct.KfInfo))
-	// arr = append(arr, new(datastruct.WebUser))
+	arr = append(arr, new(datastruct.WebUser))
 	// arr = append(arr, new(datastruct.Role))
 	// arr = append(arr, new(datastruct.EntryAddr))
 	// arr = append(arr, new(datastruct.AuthAddr))

@@ -327,6 +327,7 @@ type WebUser struct {
 	Pwd       string    `xorm:"VARCHAR(50) not null"`         //密码
 	RoleId    int       `xorm:"not null INT(11)"`             //权限id
 	CreatedAt time.Time `xorm:"created"`
+	Name      string    `xorm:"VARCHAR(50) not null"` //名称
 }
 
 type Role struct {
