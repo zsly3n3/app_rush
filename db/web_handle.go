@@ -23,9 +23,34 @@ func (handle *DBHandler) WebLogin(body *datastruct.WebLoginBody) (interface{}, d
 	if err != nil || !has {
 		return nil, datastruct.LoginFailed
 	}
-	mp := make(map[string]int)
-	mp["role_id"] = user.RoleId
-	return mp, datastruct.NULLError
+	p_user := new(datastruct.WebResponsePermissionUser)
+	p_user.Name = user.Name
+	p_user.Token = user.Token
+	permission := make([]*datastruct.MasterInfo, 0)
+	p_user.Permission = permission
+	if user.RoleId == datastruct.AdminLevelID {
+		master_menu := make([]*datastruct.MasterMenu, 0, 40)
+		engine.Asc("id").Find(&master_menu)
+		for _, v := range master_menu {
+			m_info := new(datastruct.MasterInfo)
+			m_info.MasterId = v.Id
+			m_info.Name = v.Name
+			secondary := make([]*datastruct.SecondaryInfo, 0)
+			m_info.Secondary = secondary
+			secondary_menu := make([]*datastruct.SecondaryMenu, 0, 40)
+			engine.Where("master_id=?", m_info.MasterId).Asc("id").Find(&secondary_menu)
+			for _, v := range secondary_menu {
+				secondaryInfo := new(datastruct.SecondaryInfo)
+				secondaryInfo.Name = v.Name
+				secondaryInfo.SecondaryId = v.Id
+				secondary = append(secondary, secondaryInfo)
+			}
+			permission = append(permission, m_info)
+		}
+	} else {
+
+	}
+	return p_user, datastruct.NULLError
 }
 
 func (handle *DBHandler) EditGoods(body *datastruct.EditGoodsBody) datastruct.CodeType {

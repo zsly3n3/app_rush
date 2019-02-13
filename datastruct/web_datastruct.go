@@ -724,3 +724,20 @@ type WebResponseGoldCoinGift struct {
 	IsEnableRegisterGift int   `json:"isenableregister"`  //0关闭新人福利,1开启新人福利
 	IsDrawCashOnlyApp    int   `json:"isdrawcashonlyapp"` //0关闭 ,1开启。是否只在app内提现
 }
+
+type MasterInfo struct {
+	MasterId  int              `json:"masterid"`
+	Name      string           `json:"name"`
+	Secondary []*SecondaryInfo `json:"Secondary"`
+}
+
+type SecondaryInfo struct {
+	SecondaryId int    `json:"secondaryid"`
+	Name        string `json:"name"`
+}
+
+type WebResponsePermissionUser struct {
+	Name       string        `json:"name"` //名称
+	Token      string        `json:"token"`
+	Permission []*MasterInfo `json:"permission"`
+}

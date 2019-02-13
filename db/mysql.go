@@ -112,19 +112,19 @@ func SyncDB(engine *xorm.Engine) {
 	// role := createRoleData()
 	// _, err = engine.Insert(&role)
 	// errhandle(err)
-	webUser := createLoginData(1)
+	webUser := createLoginData(datastruct.AdminLevelID)
 	_, err = engine.Insert(&webUser)
 	errhandle(err)
 }
 
 func createRoleData() []datastruct.Role {
 	admin := datastruct.Role{
-		Id:   1,
+		Id:   datastruct.AdminLevelID,
 		Desc: "admin",
 	}
 	guest := datastruct.Role{
-		Id:   2,
-		Desc: "guest",
+		Id:   datastruct.NormalLevelID,
+		Desc: "normal",
 	}
 
 	return []datastruct.Role{admin, guest}

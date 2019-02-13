@@ -2,6 +2,8 @@ package datastruct
 
 import "time"
 
+const AdminLevelID = 1
+const NormalLevelID = 2
 const MaxLevel = 3
 const MinInterval = 20 //获奖最小间隔20秒
 const AgencyIdentifier = "common"
