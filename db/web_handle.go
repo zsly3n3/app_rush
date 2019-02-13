@@ -26,26 +26,9 @@ func (handle *DBHandler) WebLogin(body *datastruct.WebLoginBody) (interface{}, d
 	p_user := new(datastruct.WebResponsePermissionUser)
 	p_user.Name = user.Name
 	p_user.Token = user.Token
-	permission := make([]*datastruct.MasterInfo, 0)
+	var permission []*datastruct.MasterInfo
 	if user.RoleId == datastruct.AdminLevelID {
-		master_menu := make([]*datastruct.MasterMenu, 0, 40)
-		engine.Asc("id").Find(&master_menu)
-		for _, v := range master_menu {
-			m_info := new(datastruct.MasterInfo)
-			m_info.MasterId = v.Id
-			m_info.Name = v.Name
-			secondary := make([]*datastruct.SecondaryInfo, 0)
-			secondary_menu := make([]*datastruct.SecondaryMenu, 0, 40)
-			engine.Where("master_id=?", m_info.MasterId).Asc("id").Find(&secondary_menu)
-			for _, v := range secondary_menu {
-				secondaryInfo := new(datastruct.SecondaryInfo)
-				secondaryInfo.Name = v.Name
-				secondaryInfo.SecondaryId = v.Id
-				secondary = append(secondary, secondaryInfo)
-			}
-			m_info.Secondary = secondary
-			permission = append(permission, m_info)
-		}
+		permission = getAllMenu(engine)
 	} else {
 
 	}
@@ -3310,6 +3293,29 @@ func (handle *DBHandler) GetWebUsers() (interface{}, datastruct.CodeType) {
 		web_users = append(web_users, user)
 	}
 	return web_users, datastruct.NULLError
+}
+
+func getAllMenu(engine *xorm.Engine) []*datastruct.MasterInfo {
+	master_menu := make([]*datastruct.MasterMenu, 0, 40)
+	permission := make([]*datastruct.MasterInfo, 0)
+	engine.Asc("id").Find(&master_menu)
+	for _, v := range master_menu {
+		m_info := new(datastruct.MasterInfo)
+		m_info.MasterId = v.Id
+		m_info.Name = v.Name
+		secondary := make([]*datastruct.SecondaryInfo, 0)
+		secondary_menu := make([]*datastruct.SecondaryMenu, 0, 40)
+		engine.Where("master_id=?", m_info.MasterId).Asc("id").Find(&secondary_menu)
+		for _, v := range secondary_menu {
+			secondaryInfo := new(datastruct.SecondaryInfo)
+			secondaryInfo.Name = v.Name
+			secondaryInfo.SecondaryId = v.Id
+			secondary = append(secondary, secondaryInfo)
+		}
+		m_info.Secondary = secondary
+		permission = append(permission, m_info)
+	}
+	return permission
 }
 
 // var valuesSlice = make([]interface{}, len(cols))
