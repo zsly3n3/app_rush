@@ -28,10 +28,13 @@ func (handle *DBHandler) WebLogin(body *datastruct.WebLoginBody) (interface{}, d
 	p_user.Token = user.Token
 	permission := make([]*datastruct.MasterInfo, 0)
 	p_user.Permission = permission
+	log.Debug("-------------user.RoleId:%v", user.RoleId)
 	if user.RoleId == datastruct.AdminLevelID {
+		log.Debug("-------------1111")
 		master_menu := make([]*datastruct.MasterMenu, 0, 40)
 		engine.Asc("id").Find(&master_menu)
 		for _, v := range master_menu {
+			log.Debug("-------------2222")
 			m_info := new(datastruct.MasterInfo)
 			m_info.MasterId = v.Id
 			m_info.Name = v.Name
