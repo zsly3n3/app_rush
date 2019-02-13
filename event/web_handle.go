@@ -641,3 +641,7 @@ func (handle *EventHandler) EditWebUser(c *gin.Context) datastruct.CodeType {
 	}
 	return handle.dbHandler.EditWebUser(&body)
 }
+
+func (handle *EventHandler) GetAllMenuInfo() (interface{}, datastruct.CodeType) {
+	return handle.dbHandler.GetAllMenuInfo()
+}

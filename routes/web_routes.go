@@ -1102,6 +1102,22 @@ func editWebUser(r *gin.Engine, eventHandler *event.EventHandler) {
 	})
 }
 
+func getAllMenuInfo(r *gin.Engine, eventHandler *event.EventHandler) {
+	r.GET("/web/allmenu", func(c *gin.Context) {
+		data, code := eventHandler.GetAllMenuInfo()
+		if code == datastruct.NULLError {
+			c.JSON(200, gin.H{
+				"code": code,
+				"data": data,
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"code": code,
+			})
+		}
+	})
+}
+
 func WebRegister(r *gin.Engine, eventHandler *event.EventHandler) {
 	editDomain(r, eventHandler)
 	updateSendInfo(r, eventHandler)
@@ -1177,4 +1193,5 @@ func WebRegister(r *gin.Engine, eventHandler *event.EventHandler) {
 	getWebUsers(r, eventHandler)
 	deleteWebUser(r, eventHandler)
 	editWebUser(r, eventHandler)
+	getAllMenuInfo(r, eventHandler)
 }

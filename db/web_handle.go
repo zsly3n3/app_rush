@@ -3295,6 +3295,10 @@ func (handle *DBHandler) GetWebUsers() (interface{}, datastruct.CodeType) {
 	return web_users, datastruct.NULLError
 }
 
+func (handle *DBHandler) GetAllMenuInfo() (interface{}, datastruct.CodeType) {
+	return getAllMenu(handle.mysqlEngine), datastruct.NULLError
+}
+
 func getAllMenu(engine *xorm.Engine) []*datastruct.MasterInfo {
 	master_menu := make([]*datastruct.MasterMenu, 0, 40)
 	permission := make([]*datastruct.MasterInfo, 0)
