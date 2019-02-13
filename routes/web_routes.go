@@ -1085,6 +1085,23 @@ func getWebUsers(r *gin.Engine, eventHandler *event.EventHandler) {
 	})
 }
 
+func deleteWebUser(r *gin.Engine, eventHandler *event.EventHandler) {
+	r.POST("/web/deletewebuser", func(c *gin.Context) {
+		code := eventHandler.DeleteWebUser(c)
+		c.JSON(200, gin.H{
+			"code": code,
+		})
+	})
+}
+
+func editWebUser(r *gin.Engine, eventHandler *event.EventHandler) {
+	r.POST("/web/editwebuser", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"code": eventHandler.EditWebUser(c),
+		})
+	})
+}
+
 func WebRegister(r *gin.Engine, eventHandler *event.EventHandler) {
 	editDomain(r, eventHandler)
 	updateSendInfo(r, eventHandler)
@@ -1158,4 +1175,6 @@ func WebRegister(r *gin.Engine, eventHandler *event.EventHandler) {
 	editGoldCoinGift(r, eventHandler)
 	getActiveUsers(r, eventHandler)
 	getWebUsers(r, eventHandler)
+	deleteWebUser(r, eventHandler)
+	editWebUser(r, eventHandler)
 }

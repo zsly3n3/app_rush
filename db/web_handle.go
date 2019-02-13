@@ -3195,7 +3195,7 @@ func (handle *DBHandler) EditGoldCoinGift(body *datastruct.WebResponseGoldCoinGi
 	return datastruct.NULLError
 }
 
-func (handle *DBHandler) EditPermissionUser(body *datastruct.WebEditPermissionUserBody) datastruct.CodeType {
+func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody) datastruct.CodeType {
 	engine := handle.mysqlEngine
 	session := engine.NewSession()
 	defer session.Close()
@@ -3252,7 +3252,7 @@ func (handle *DBHandler) EditPermissionUser(body *datastruct.WebEditPermissionUs
 	return datastruct.NULLError
 }
 
-func (handle *DBHandler) DeletePermissionUser(webUserId int) datastruct.CodeType {
+func (handle *DBHandler) DeleteWebUser(webUserId int) datastruct.CodeType {
 	engine := handle.mysqlEngine
 	session := engine.NewSession()
 	defer session.Close()

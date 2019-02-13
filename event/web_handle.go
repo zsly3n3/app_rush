@@ -623,3 +623,21 @@ func (handle *EventHandler) EditGoldCoinGift(c *gin.Context) datastruct.CodeType
 func (handle *EventHandler) GetWebUsers() (interface{}, datastruct.CodeType) {
 	return handle.dbHandler.GetWebUsers()
 }
+
+func (handle *EventHandler) DeleteWebUser(c *gin.Context) datastruct.CodeType {
+	var body datastruct.WebDeleteMemberBody
+	err := c.BindJSON(&body)
+	if err != nil || body.Id <= datastruct.AdminLevelID {
+		return datastruct.ParamError
+	}
+	return handle.dbHandler.DeleteWebUser(body.Id)
+}
+
+func (handle *EventHandler) EditWebUser(c *gin.Context) datastruct.CodeType {
+	var body datastruct.WebEditPermissionUserBody
+	err := c.BindJSON(&body)
+	if err != nil || body.Id == datastruct.AdminLevelID || body.Id < 0 || body.LoginName == "" || body.Name == "" || len(body.PermissionIds) <= 0 || body.Pwd == "" {
+		return datastruct.ParamError
+	}
+	return handle.dbHandler.EditWebUser(&body)
+}
