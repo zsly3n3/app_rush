@@ -96,6 +96,8 @@ func SyncDB(engine *xorm.Engine) {
 	arr = append(arr, new(datastruct.GoldCoinGift))
 	arr = append(arr, new(datastruct.TmpData))
 	arr = append(arr, new(datastruct.TmpDataForGoods))
+	arr = append(arr, new(datastruct.MasterMenu))
+	arr = append(arr, new(datastruct.SecondaryMenu))
 
 	// err = engine.DropTables(arr...)
 	// errhandle(err)

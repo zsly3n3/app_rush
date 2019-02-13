@@ -522,3 +522,13 @@ type TmpDataForGoods struct {
 	GoodsId   int   `xorm:"not null INT(11)"`
 	UpdateAt  int64 `xorm:"bigint not null"`
 }
+
+type MasterMenu struct {
+	Id   int    `xorm:"not null pk autoincr INT(11)"` //自增id
+	Name string `xorm:"VARCHAR(50) not null"`
+}
+
+type SecondaryMenu struct {
+	Id   int    `xorm:"not null pk autoincr INT(11)"` //自增id
+	Name string `xorm:"VARCHAR(50) not null"`
+}
