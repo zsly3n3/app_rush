@@ -339,6 +339,14 @@ type WebQueryAdBody struct {
 	IsHidden int        `json:"ishidden"`
 }
 
+type WebEditPermissionUserBody struct {
+	Id            int    `json:"id"`
+	Name          string `json:"name"`
+	LoginName     string `json:"loginname"`
+	Pwd           string `json:"pwd"`
+	PermissionIds []int  `json:"permission"`
+}
+
 //Web Response
 type WebResponseGoods struct {
 	Total int                     `json:"total"`

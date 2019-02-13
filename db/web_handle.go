@@ -3170,5 +3170,11 @@ func (handle *DBHandler) EditGoldCoinGift(body *datastruct.WebResponseGoldCoinGi
 	return datastruct.NULLError
 }
 
+func (handle *DBHandler) EditPermissionUser(body *datastruct.WebEditPermissionUserBody) datastruct.CodeType {
+	// engine := handle.mysqlEngine
+
+	return datastruct.NULLError
+}
+
 // var valuesSlice = make([]interface{}, len(cols))
 // has, err := engine.Where("id = ?", id).Cols(cols...).Get(&valuesSlice)

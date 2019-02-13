@@ -4,7 +4,9 @@ import (
 	"app/conf"
 	"app/datastruct"
 	"app/log"
+	"app/tools"
 	"fmt"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
@@ -110,8 +112,8 @@ func SyncDB(engine *xorm.Engine) {
 	// role := createRoleData()
 	// _, err = engine.Insert(&role)
 	// errhandle(err)
-	// webUser := createLoginData(1, 2)
-	// _, err = engine.Insert(&webUser)
+	webUser := createLoginData(1)
+	_, err = engine.Insert(&webUser)
 	// errhandle(err)
 }
 
@@ -128,18 +130,18 @@ func createRoleData() []datastruct.Role {
 	return []datastruct.Role{admin, guest}
 }
 
-func createLoginData(adminLevelID int, guestLevelID int) []datastruct.WebUser {
+func createLoginData(adminLevelID int) []datastruct.WebUser {
+	now_time := time.Now().Unix()
 	admin := datastruct.WebUser{
+		Name:      "管理员",
 		LoginName: "admin",
 		Pwd:       "123@s678",
 		RoleId:    adminLevelID,
+		Token:     tools.UniqueId(),
+		CreatedAt: now_time,
+		UpdatedAt: now_time,
 	}
-	guest := datastruct.WebUser{
-		LoginName: "guest",
-		Pwd:       "123456",
-		RoleId:    guestLevelID,
-	}
-	return []datastruct.WebUser{admin, guest}
+	return []datastruct.WebUser{admin}
 }
 
 func initData(engine *xorm.Engine) {

@@ -1,7 +1,5 @@
 package datastruct
 
-import "time"
-
 const NULLSTRING = ""
 const NULLID = -1
 
@@ -322,12 +320,14 @@ type ServerVersion struct {
 }
 
 type WebUser struct {
-	Id        int       `xorm:"not null pk autoincr INT(11)"` //自增id
-	LoginName string    `xorm:"VARCHAR(50) not null"`         //登录名
-	Pwd       string    `xorm:"VARCHAR(50) not null"`         //密码
-	RoleId    int       `xorm:"not null INT(11)"`             //权限id
-	CreatedAt time.Time `xorm:"created"`
-	Name      string    `xorm:"VARCHAR(50) not null"` //名称
+	Id        int    `xorm:"not null pk autoincr INT(11)"` //自增id
+	Name      string `xorm:"VARCHAR(50) not null"`         //名称
+	LoginName string `xorm:"VARCHAR(50) not null"`         //登录名
+	Pwd       string `xorm:"VARCHAR(50) not null"`         //密码
+	RoleId    int    `xorm:"not null INT(11)"`             //权限id
+	Token     string `xorm:"VARCHAR(20) not null"`
+	CreatedAt int64  `xorm:"bigint not null"`
+	UpdatedAt int64  `xorm:"bigint not null"`
 }
 
 type Role struct {
