@@ -619,3 +619,7 @@ func (handle *EventHandler) EditGoldCoinGift(c *gin.Context) datastruct.CodeType
 	}
 	return handle.dbHandler.EditGoldCoinGift(&body)
 }
+
+func (handle *EventHandler) GetWebUsers() (interface{}, datastruct.CodeType) {
+	return handle.dbHandler.GetWebUsers()
+}

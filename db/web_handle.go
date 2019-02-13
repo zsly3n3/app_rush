@@ -3196,9 +3196,116 @@ func (handle *DBHandler) EditGoldCoinGift(body *datastruct.WebResponseGoldCoinGi
 }
 
 func (handle *DBHandler) EditPermissionUser(body *datastruct.WebEditPermissionUserBody) datastruct.CodeType {
-	// engine := handle.mysqlEngine
+	engine := handle.mysqlEngine
+	session := engine.NewSession()
+	defer session.Close()
+	session.Begin()
+	isUpdate := false
+	if body.Id > 0 {
+		isUpdate = true
+	}
+	now_time := time.Now().Unix()
+	web_user := new(datastruct.WebUser)
+	web_user.LoginName = body.LoginName
+	web_user.Name = body.Name
+	web_user.Pwd = body.Pwd
+	web_user.UpdatedAt = now_time
+	var err error
+	if !isUpdate {
+		web_user.CreatedAt = now_time
+		web_user.RoleId = datastruct.NormalLevelID
+		web_user.Token = tools.UniqueId()
+		_, err = session.Insert(web_user)
+	} else {
+		_, err = session.Where("id=?", body.Id).Cols("name", "login_name", "pwd", "updated_at").Update(web_user)
+	}
+	if err != nil {
+		str := fmt.Sprintf("EditPermissionUser err0:%s", err.Error())
+		rollbackError(str, session)
+		return datastruct.UpdateDataFailed
+	}
+	permission := new(datastruct.WebPermission)
+	_, err = session.Where("user_id=?", body.Id).Delete(permission)
+	if err != nil {
+		str := fmt.Sprintf("EditPermissionUser err1:%s", err.Error())
+		rollbackError(str, session)
+		return datastruct.UpdateDataFailed
+	}
+	for _, v := range body.PermissionIds {
+		permission := new(datastruct.WebPermission)
+		permission.UserId = body.Id
+		permission.SecondaryId = v
+		_, err = session.Insert(permission)
+		if err != nil {
+			str := fmt.Sprintf("EditPermissionUser err2:%s", err.Error())
+			rollbackError(str, session)
+			return datastruct.UpdateDataFailed
+		}
+	}
+
+	err = session.Commit()
+	if err != nil {
+		str := fmt.Sprintf("DBHandler->EditPermissionUser Commit :%s", err.Error())
+		rollbackError(str, session)
+		return datastruct.UpdateDataFailed
+	}
+	return datastruct.NULLError
+}
+
+func (handle *DBHandler) DeletePermissionUser(webUserId int) datastruct.CodeType {
+	engine := handle.mysqlEngine
+	session := engine.NewSession()
+	defer session.Close()
+	session.Begin()
+
+	var err error
+	web_user := new(datastruct.WebUser)
+	_, err = session.Where("id=?", webUserId).Delete(web_user)
+	if err != nil {
+		str := fmt.Sprintf("DeletePermissionUser err0:%s", err.Error())
+		rollbackError(str, session)
+		return datastruct.UpdateDataFailed
+	}
+
+	permission := new(datastruct.WebPermission)
+	_, err = session.Where("user_id=?", webUserId).Delete(permission)
+	if err != nil {
+		str := fmt.Sprintf("DeletePermissionUser err1:%s", err.Error())
+		rollbackError(str, session)
+		return datastruct.UpdateDataFailed
+	}
+
+	err = session.Commit()
+	if err != nil {
+		str := fmt.Sprintf("DBHandler->DeletePermissionUser Commit :%s", err.Error())
+		rollbackError(str, session)
+		return datastruct.UpdateDataFailed
+	}
 
 	return datastruct.NULLError
+}
+
+func (handle *DBHandler) GetWebUsers() (interface{}, datastruct.CodeType) {
+	engine := handle.mysqlEngine
+	users := make([]datastruct.WebUser, 0)
+	engine.Where("role_id <> ?", datastruct.AdminLevelID).Asc("created_at").Find(&users)
+	web_users := make([]*datastruct.WebEditPermissionUserBody, 0)
+	for _, v := range users {
+		user := new(datastruct.WebEditPermissionUserBody)
+		user.Id = v.Id
+		user.LoginName = v.LoginName
+		user.Name = v.Name
+		user.Pwd = v.Pwd
+		permission := make([]datastruct.WebPermission, 0)
+		engine.Where("user_id=?", v.Id).Asc("secondary_id").Find(&permission)
+		permissionIds := make([]int, 0, len(permission))
+		for _, v := range permission {
+			permissionIds = append(permissionIds, v.SecondaryId)
+		}
+		user.PermissionIds = permissionIds
+		web_users = append(web_users, user)
+	}
+	return web_users, datastruct.NULLError
 }
 
 // var valuesSlice = make([]interface{}, len(cols))

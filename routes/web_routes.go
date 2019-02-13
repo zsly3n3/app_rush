@@ -1069,6 +1069,22 @@ func editGoldCoinGift(r *gin.Engine, eventHandler *event.EventHandler) {
 	})
 }
 
+func getWebUsers(r *gin.Engine, eventHandler *event.EventHandler) {
+	r.GET("/web/webusers", func(c *gin.Context) {
+		data, code := eventHandler.GetWebUsers()
+		if code == datastruct.NULLError {
+			c.JSON(200, gin.H{
+				"code": code,
+				"data": data,
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"code": code,
+			})
+		}
+	})
+}
+
 func WebRegister(r *gin.Engine, eventHandler *event.EventHandler) {
 	editDomain(r, eventHandler)
 	updateSendInfo(r, eventHandler)
@@ -1141,4 +1157,5 @@ func WebRegister(r *gin.Engine, eventHandler *event.EventHandler) {
 	getGoldCoinGift(r, eventHandler)
 	editGoldCoinGift(r, eventHandler)
 	getActiveUsers(r, eventHandler)
+	getWebUsers(r, eventHandler)
 }
