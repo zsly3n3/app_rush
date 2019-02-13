@@ -37,6 +37,7 @@ func cors() gin.HandlerFunc {
 }
 
 func main() {
+	tools.CreateIdWorker()
 	eventHandler = event.CreateEventHandler()
 	r := gin.Default()
 	var mode string
@@ -52,7 +53,6 @@ func main() {
 	r.Use(cors())
 	routes.Register(r, eventHandler)
 	routes.WebRegister(r, eventHandler)
-	tools.CreateIdWorker()
 
 	server := &http.Server{Addr: conf.Server.HttpServer, Handler: r}
 	gracehttp.Serve(server)
