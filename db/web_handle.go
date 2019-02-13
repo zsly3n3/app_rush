@@ -27,19 +27,14 @@ func (handle *DBHandler) WebLogin(body *datastruct.WebLoginBody) (interface{}, d
 	p_user.Name = user.Name
 	p_user.Token = user.Token
 	permission := make([]*datastruct.MasterInfo, 0)
-	p_user.Permission = permission
-	log.Debug("-------------user.RoleId:%v", user.RoleId)
 	if user.RoleId == datastruct.AdminLevelID {
-		log.Debug("-------------1111")
 		master_menu := make([]*datastruct.MasterMenu, 0, 40)
 		engine.Asc("id").Find(&master_menu)
 		for _, v := range master_menu {
-			log.Debug("-------------2222")
 			m_info := new(datastruct.MasterInfo)
 			m_info.MasterId = v.Id
 			m_info.Name = v.Name
 			secondary := make([]*datastruct.SecondaryInfo, 0)
-			m_info.Secondary = secondary
 			secondary_menu := make([]*datastruct.SecondaryMenu, 0, 40)
 			engine.Where("master_id=?", m_info.MasterId).Asc("id").Find(&secondary_menu)
 			for _, v := range secondary_menu {
@@ -48,11 +43,13 @@ func (handle *DBHandler) WebLogin(body *datastruct.WebLoginBody) (interface{}, d
 				secondaryInfo.SecondaryId = v.Id
 				secondary = append(secondary, secondaryInfo)
 			}
+			m_info.Secondary = secondary
 			permission = append(permission, m_info)
 		}
 	} else {
 
 	}
+	p_user.Permission = permission
 	return p_user, datastruct.NULLError
 }
 
