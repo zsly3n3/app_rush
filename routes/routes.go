@@ -1364,6 +1364,22 @@ func getRegisterGift(r *gin.Engine, eventHandler *event.EventHandler) {
 	})
 }
 
+func appGetDefaultAgency(r *gin.Engine, eventHandler *event.EventHandler) {
+	r.GET("/app/defaultagency", func(c *gin.Context) {
+		data, code := eventHandler.GetDefaultAgency()
+		if code == datastruct.NULLError {
+			c.JSON(200, gin.H{
+				"code": code,
+				"data": data,
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"code": code,
+			})
+		}
+	})
+}
+
 func Register(r *gin.Engine, eventHandler *event.EventHandler) {
 	getAuthAddr(r, eventHandler)
 	getKfInfo(r, eventHandler)
@@ -1424,5 +1440,5 @@ func Register(r *gin.Engine, eventHandler *event.EventHandler) {
 	addComplaint(r, eventHandler)
 	getDownLoadAppGift(r, eventHandler)
 	getRegisterGift(r, eventHandler)
-	//userActivate(r, eventHandler)
+	appGetDefaultAgency(r, eventHandler)
 }

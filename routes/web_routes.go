@@ -3,7 +3,6 @@ package routes
 import (
 	"app/datastruct"
 	"app/event"
-	"app/log"
 	"app/tools"
 
 	"github.com/gin-gonic/gin"
@@ -11,7 +10,6 @@ import (
 
 func editDomain(r *gin.Engine, eventHandler *event.EventHandler) {
 	r.POST("/web/domain", func(c *gin.Context) {
-		log.Debug("c.Request.Method:%v", c.Request.Method)
 		c.JSON(200, gin.H{
 			"code": eventHandler.EditDomain(c),
 		})
@@ -38,7 +36,6 @@ func editMemberLevel(r *gin.Engine, eventHandler *event.EventHandler) {
 
 func getDefaultAgency(r *gin.Engine, eventHandler *event.EventHandler) {
 	r.GET("/web/defaultagency", func(c *gin.Context) {
-		log.Debug("c.Request.Method:%v", c.Request.Method)
 		data, code := eventHandler.GetDefaultAgency()
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
@@ -1120,19 +1117,20 @@ func getAllMenuInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func WebRegister(r *gin.Engine, eventHandler *event.EventHandler) {
-	editDomain(r, eventHandler)       //添加或修改域名
-	updateSendInfo(r, eventHandler)   //商品已发货
-	webLogin(r, eventHandler)         //web登录
-	editGoods(r, eventHandler)        //添加或修改商品信息
-	webGetGoods(r, eventHandler)      //商品查询
-	getDomain(r, eventHandler)        //获取域名信息
-	getBlackListJump(r, eventHandler) //获取黑名单跳转信息
-	editBlackListJump(r, eventHandler)
-	getRushOrder(r, eventHandler)
-	getPurchaseOrder(r, eventHandler)
-	getSendGoodsOrder(r, eventHandler)
-	updateDefaultAgency(r, eventHandler)
-	getDefaultAgency(r, eventHandler)
+	editDomain(r, eventHandler)        //添加或修改域名
+	updateSendInfo(r, eventHandler)    //商品已发货
+	webLogin(r, eventHandler)          //web登录
+	editGoods(r, eventHandler)         //添加或修改商品信息
+	webGetGoods(r, eventHandler)       //商品查询
+	getDomain(r, eventHandler)         //获取域名信息
+	getBlackListJump(r, eventHandler)  //获取黑名单跳转信息
+	editBlackListJump(r, eventHandler) //添加或修改黑名单跳转信息
+	getRushOrder(r, eventHandler)      //闯关订单查询
+	getPurchaseOrder(r, eventHandler)  //直接购买订单查询
+
+	getSendGoodsOrder(r, eventHandler)   //发货订单查询
+	updateDefaultAgency(r, eventHandler) //修改默认佣金设置
+	getDefaultAgency(r, eventHandler)    //获取默认佣金设置
 	editMemberLevel(r, eventHandler)
 	getMemberLevel(r, eventHandler)
 	webGetMembers(r, eventHandler)
@@ -1140,6 +1138,7 @@ func WebRegister(r *gin.Engine, eventHandler *event.EventHandler) {
 	updateUserLevel(r, eventHandler)
 	webChangeGold(r, eventHandler)
 	myPrentices(r, eventHandler)
+
 	getServerInfo(r, eventHandler)
 	editServerInfo(r, eventHandler)
 	updateGoodsClassState(r, eventHandler)
