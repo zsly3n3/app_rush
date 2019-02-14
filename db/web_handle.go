@@ -34,7 +34,7 @@ func (handle *DBHandler) WebLogin(body *datastruct.WebLoginBody) (interface{}, d
 		sql := "select mm.id,mm.name from web_permission wp join secondary_menu sm on wp.secondary_id = sm.id join master_menu mm on mm.id = sm.master_id where user_id = ? GROUP BY mm.id order by mm.id asc"
 		rs, _ := engine.Query(sql, user.Id)
 		for _, v := range rs {
-			master_id := tools.StringToInt(string(v["master_id"][:]))
+			master_id := tools.StringToInt(string(v["id"][:]))
 			master_name := string(v["name"][:])
 			m_info := new(datastruct.MasterInfo)
 			m_info.MasterId = master_id
