@@ -540,3 +540,9 @@ type WebPermission struct {
 	UserId      int `xorm:"not null INT(11)"`             //web_user's id
 	SecondaryId int `xorm:"not null INT(11)"`             //二级菜单id
 }
+
+type WebSecondaryMenuApi struct {
+	SecondaryId int    `xorm:"not null INT(11)"`      //二级菜单id
+	Method      string `xorm:"VARCHAR(20) not null"`  //小写post,get,put等
+	Url         string `xorm:"VARCHAR(100) not null"` //全小写
+}

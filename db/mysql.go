@@ -101,6 +101,7 @@ func SyncDB(engine *xorm.Engine) {
 	arr = append(arr, new(datastruct.MasterMenu))
 	arr = append(arr, new(datastruct.SecondaryMenu))
 	arr = append(arr, new(datastruct.WebPermission))
+	arr = append(arr, new(datastruct.WebSecondaryMenuApi))
 
 	// err = engine.DropTables(arr...)
 	// errhandle(err)

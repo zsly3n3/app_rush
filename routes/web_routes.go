@@ -856,7 +856,6 @@ func updateSignForState(r *gin.Engine, eventHandler *event.EventHandler) {
 		c.JSON(200, gin.H{
 			"code": eventHandler.UpdateSignForState(c),
 		})
-
 	})
 }
 
@@ -1119,13 +1118,13 @@ func getAllMenuInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func WebRegister(r *gin.Engine, eventHandler *event.EventHandler) {
-	editDomain(r, eventHandler)
-	updateSendInfo(r, eventHandler)
-	webLogin(r, eventHandler)
-	editGoods(r, eventHandler)
-	webGetGoods(r, eventHandler)
-	getDomain(r, eventHandler)
-	getBlackListJump(r, eventHandler)
+	editDomain(r, eventHandler)       //添加或修改域名
+	updateSendInfo(r, eventHandler)   //商品已发货
+	webLogin(r, eventHandler)         //web登录
+	editGoods(r, eventHandler)        //添加或修改商品信息
+	webGetGoods(r, eventHandler)      //商品查询
+	getDomain(r, eventHandler)        //获取域名信息
+	getBlackListJump(r, eventHandler) //获取黑名单跳转信息
 	editBlackListJump(r, eventHandler)
 	getRushOrder(r, eventHandler)
 	getPurchaseOrder(r, eventHandler)
@@ -1148,10 +1147,6 @@ func WebRegister(r *gin.Engine, eventHandler *event.EventHandler) {
 	getAllDrawInfo(r, eventHandler)
 	getAllMembers(r, eventHandler)
 	updateMemberLevelState(r, eventHandler)
-	// getNewUsers(r, eventHandler)
-	// getTotalEarn(r, eventHandler)
-	// getDepositUsers(r, eventHandler)
-	// getActivityUsers(r, eventHandler)
 	getMemberOrder(r, eventHandler)
 	deleteMemberOrder(r, eventHandler)
 	editRandomLotteryGoods(r, eventHandler)
