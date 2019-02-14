@@ -30,10 +30,12 @@ func (handle *DBHandler) WebLogin(body *datastruct.WebLoginBody) (interface{}, d
 	if user.RoleId == datastruct.AdminLevelID {
 		permission = getAllMenu(engine)
 	} else {
+		log.Debug("-----------------1111")
 		permission := make([]*datastruct.MasterInfo, 0)
 		sql := "select mm.id,mm.name from web_permission wp join secondary_menu sm on wp.secondary_id = sm.id join master_menu mm on mm.id = sm.master_id where user_id = ? GROUP BY mm.id order by mm.id asc"
 		rs, _ := engine.Query(sql, user.Id)
 		for _, v := range rs {
+			log.Debug("-----------------2222")
 			master_id := tools.StringToInt(string(v["master_id"][:]))
 			master_name := string(v["name"][:])
 			m_info := new(datastruct.MasterInfo)
