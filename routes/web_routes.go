@@ -3,14 +3,15 @@ package routes
 import (
 	"app/datastruct"
 	"app/event"
+	"app/log"
 	"app/tools"
 
 	"github.com/gin-gonic/gin"
-	//"app/log"
 )
 
 func editDomain(r *gin.Engine, eventHandler *event.EventHandler) {
 	r.POST("/web/domain", func(c *gin.Context) {
+		log.Debug("c.Request.Method:%v", c.Request.Method)
 		c.JSON(200, gin.H{
 			"code": eventHandler.EditDomain(c),
 		})
@@ -37,6 +38,7 @@ func editMemberLevel(r *gin.Engine, eventHandler *event.EventHandler) {
 
 func getDefaultAgency(r *gin.Engine, eventHandler *event.EventHandler) {
 	r.GET("/web/defaultagency", func(c *gin.Context) {
+		log.Debug("c.Request.Method:%v", c.Request.Method)
 		data, code := eventHandler.GetDefaultAgency()
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
