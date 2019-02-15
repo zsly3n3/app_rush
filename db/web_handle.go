@@ -3211,7 +3211,6 @@ func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody)
 	web_user := new(datastruct.WebUser)
 	web_user.LoginName = body.LoginName
 	web_user.Name = body.Name
-	web_user.Pwd = body.Pwd
 	web_user.UpdatedAt = now_time
 	var err error
 	var user_id int
@@ -3223,8 +3222,16 @@ func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody)
 		user_id = web_user.Id
 	} else {
 		user_id = body.Id
-		_, err = session.Where("id=?", user_id).Cols("name", "login_name", "pwd", "updated_at").Update(web_user)
-
+		isUpdatePwd := false
+		if web_user.Pwd != "" {
+			isUpdatePwd = true
+			web_user.Pwd = body.Pwd
+		}
+		if isUpdatePwd {
+			_, err = session.Where("id=?", user_id).Cols("name", "login_name", "pwd", "updated_at").Update(web_user)
+		} else {
+			_, err = session.Where("id=?", user_id).Cols("name", "login_name", "updated_at").Update(web_user)
+		}
 	}
 	if err != nil {
 		str := fmt.Sprintf("EditPermissionUser err0:%s", err.Error())
@@ -3296,13 +3303,12 @@ func (handle *DBHandler) GetWebUsers() (interface{}, datastruct.CodeType) {
 	engine := handle.mysqlEngine
 	users := make([]datastruct.WebUser, 0)
 	engine.Where("role_id <> ?", datastruct.AdminLevelID).Asc("created_at").Find(&users)
-	web_users := make([]*datastruct.WebEditPermissionUserBody, 0)
+	web_users := make([]*datastruct.WebResponseAllWebUser, 0)
 	for _, v := range users {
-		user := new(datastruct.WebEditPermissionUserBody)
-		user.Id = v.Id
+		user := new(datastruct.WebResponseAllWebUser)
+		user.Id = v.Ids
 		user.LoginName = v.LoginName
 		user.Name = v.Name
-		user.Pwd = v.Pwd
 		permission := make([]datastruct.WebPermission, 0)
 		engine.Where("user_id=?", v.Id).Asc("secondary_id").Find(&permission)
 		permissionIds := make([]int, 0, len(permission))

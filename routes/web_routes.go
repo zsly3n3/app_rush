@@ -894,7 +894,11 @@ func editSharePoster(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func getAllSharePosters(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/allshareposters", func(c *gin.Context) {
+	url := "/web/allshareposters"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		data, code := eventHandler.GetAllSharePosters(c)
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
@@ -910,7 +914,11 @@ func getAllSharePosters(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func updateSharePosterState(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/updateposterstate", func(c *gin.Context) {
+	url := "/web/updateposterstate"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		code := eventHandler.UpdateSharePosterState(c)
 		c.JSON(200, gin.H{
 			"code": code,
@@ -919,10 +927,14 @@ func updateSharePosterState(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func editUserAppraise(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/edituserappraise", func(c *gin.Context) {
+	url := "/web/edituserappraise"
+	r.POST(url, func(c *gin.Context) {
 		// data1, _ := ioutil.ReadAll(c.Request.Body)
 		// log.Debug("---body/---%v", string(data1))
 		// return
+		if !checkPermission(c, url) {
+			return
+		}
 		code := eventHandler.EditUserAppraise(c)
 		c.JSON(200, gin.H{
 			"code": code,
@@ -930,10 +942,14 @@ func editUserAppraise(r *gin.Engine, eventHandler *event.EventHandler) {
 	})
 }
 func deleteUserAppraise(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/deleteuserappraise", func(c *gin.Context) {
+	url := "/web/deleteuserappraise"
+	r.POST(url, func(c *gin.Context) {
 		// data1, _ := ioutil.ReadAll(c.Request.Body)
 		// log.Debug("---body/---%v", string(data1))
 		// return
+		if !checkPermission(c, url) {
+			return
+		}
 		code := eventHandler.DeleteUserAppraise(c)
 		c.JSON(200, gin.H{
 			"code": code,
@@ -942,7 +958,11 @@ func deleteUserAppraise(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func getUserAppraise(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/getuserappraise", func(c *gin.Context) {
+	url := "/web/getuserappraise"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		data, code := eventHandler.GetUserAppraise(c)
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
@@ -957,7 +977,11 @@ func getUserAppraise(r *gin.Engine, eventHandler *event.EventHandler) {
 	})
 }
 func updateSignForState(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/updatesignforstate", func(c *gin.Context) {
+	url := "/web/updatesignforstate"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		c.JSON(200, gin.H{
 			"code": eventHandler.UpdateSignForState(c),
 		})
@@ -965,10 +989,14 @@ func updateSignForState(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func editGoodsDetail(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/editgoodsdetail", func(c *gin.Context) {
+	url := "/web/editgoodsdetail"
+	r.POST(url, func(c *gin.Context) {
 		// data1, _ := ioutil.ReadAll(c.Request.Body)
 		// log.Debug("---body/---%v", string(data1))
 		// return
+		if !checkPermission(c, url) {
+			return
+		}
 		code := eventHandler.EditGoodsDetail(c)
 		c.JSON(200, gin.H{
 			"code": code,
@@ -976,7 +1004,11 @@ func editGoodsDetail(r *gin.Engine, eventHandler *event.EventHandler) {
 	})
 }
 func getGoodsDetail(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.GET("/web/goodsdetail/:goodsid", func(c *gin.Context) {
+	url := "/web/goodsdetail/:goodsid"
+	r.GET(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		goodsid := tools.StringToInt(c.Param("goodsid"))
 		if goodsid <= 0 {
 			c.JSON(200, gin.H{
@@ -999,7 +1031,11 @@ func getGoodsDetail(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func getSCParams(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.GET("/web/scparams", func(c *gin.Context) {
+	url := "/web/scparams"
+	r.GET(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		data, code := eventHandler.GetSCParams()
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
@@ -1015,7 +1051,11 @@ func getSCParams(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func updateSCParams(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/scparams", func(c *gin.Context) {
+	url := "/web/scparams"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		code := eventHandler.UpdateSCParams(c)
 		c.JSON(200, gin.H{
 			"code": code,
@@ -1024,7 +1064,11 @@ func updateSCParams(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func getSuggestion(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/getsuggest", func(c *gin.Context) {
+	url := "/web/getsuggest"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		data, code := eventHandler.GetSuggestion(c)
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
@@ -1040,7 +1084,11 @@ func getSuggestion(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func deleteSuggestion(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/delsuggestion", func(c *gin.Context) {
+	url := "/web/delsuggestion"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		code := eventHandler.DeleteSuggestion(c)
 		c.JSON(200, gin.H{
 			"code": code,
@@ -1049,7 +1097,11 @@ func deleteSuggestion(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func deleteComplaint(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/delcomplaint", func(c *gin.Context) {
+	url := "/web/delcomplaint"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		code := eventHandler.DeleteComplaint(c)
 		c.JSON(200, gin.H{
 			"code": code,
@@ -1058,7 +1110,11 @@ func deleteComplaint(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func getComplaint(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/getcomplaint", func(c *gin.Context) {
+	url := "/web/getcomplaint"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		data, code := eventHandler.GetComplaint(c)
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
@@ -1074,7 +1130,11 @@ func getComplaint(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func getDrawCashParams(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.GET("/web/drawcashparams", func(c *gin.Context) {
+	url := "/web/drawcashparams"
+	r.GET(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		data, code := eventHandler.GetDrawCashParams()
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
@@ -1090,7 +1150,11 @@ func getDrawCashParams(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func updateDrawCashParams(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/drawcashparams", func(c *gin.Context) {
+	url := "/web/drawcashparams"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		code := eventHandler.UpdateDrawCashParams(c)
 		c.JSON(200, gin.H{
 			"code": code,
@@ -1099,7 +1163,11 @@ func updateDrawCashParams(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func drawCashPass(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/drawcashpass", func(c *gin.Context) {
+	url := "/web/drawcashpass"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		code := eventHandler.DrawCashPass(c)
 		c.JSON(200, gin.H{
 			"code": code,
@@ -1108,7 +1176,11 @@ func drawCashPass(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func deleteSharePosters(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/delposters", func(c *gin.Context) {
+	url := "/web/delposters"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		code := eventHandler.DeleteSharePosters(c)
 		c.JSON(200, gin.H{
 			"code": code,
@@ -1117,7 +1189,11 @@ func deleteSharePosters(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func deleteAd(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/deletead", func(c *gin.Context) {
+	url := "/web/deletead"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		code := eventHandler.DeleteAd(c)
 		c.JSON(200, gin.H{
 			"code": code,
@@ -1126,7 +1202,11 @@ func deleteAd(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func getAllAd(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/adinfo", func(c *gin.Context) {
+	url := "/web/adinfo"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		data, code := eventHandler.GetAllAd(c)
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
@@ -1142,7 +1222,11 @@ func getAllAd(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func editAd(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/editadinfo", func(c *gin.Context) {
+	url := "/web/editadinfo"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		c.JSON(200, gin.H{
 			"code": eventHandler.EditAd(c),
 		})
@@ -1150,7 +1234,11 @@ func editAd(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func getGoldCoinGift(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.GET("/web/goldcoingift", func(c *gin.Context) {
+	url := "/web/goldcoingift"
+	r.GET(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		data, code := eventHandler.GetGoldCoinGift()
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
@@ -1166,7 +1254,11 @@ func getGoldCoinGift(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func editGoldCoinGift(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/goldcoingift", func(c *gin.Context) {
+	url := "/web/goldcoingift"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		c.JSON(200, gin.H{
 			"code": eventHandler.EditGoldCoinGift(c),
 		})
@@ -1174,7 +1266,11 @@ func editGoldCoinGift(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func getWebUsers(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.GET("/web/webusers", func(c *gin.Context) {
+	url := "/web/webusers"
+	r.GET(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		data, code := eventHandler.GetWebUsers()
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
@@ -1190,7 +1286,11 @@ func getWebUsers(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func deleteWebUser(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/deletewebuser", func(c *gin.Context) {
+	url := "/web/deletewebuser"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		code := eventHandler.DeleteWebUser(c)
 		c.JSON(200, gin.H{
 			"code": code,
@@ -1199,7 +1299,11 @@ func deleteWebUser(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func editWebUser(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/editwebuser", func(c *gin.Context) {
+	url := "/web/editwebuser"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		c.JSON(200, gin.H{
 			"code": eventHandler.EditWebUser(c),
 		})
@@ -1207,7 +1311,11 @@ func editWebUser(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func getAllMenuInfo(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.GET("/web/allmenu", func(c *gin.Context) {
+	url := "/web/allmenu"
+	r.GET(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		data, code := eventHandler.GetAllMenuInfo()
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
@@ -1221,9 +1329,7 @@ func getAllMenuInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 		}
 	})
 }
-
 func checkPermission(c *gin.Context, url string) bool {
-
 	return true
 }
 

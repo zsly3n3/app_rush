@@ -342,8 +342,8 @@ type WebQueryAdBody struct {
 type WebEditPermissionUserBody struct {
 	Id            int    `json:"id"`
 	Name          string `json:"name"`
-	LoginName     string `json:"loginname"`
 	Pwd           string `json:"pwd"`
+	LoginName     string `json:"loginname"`
 	PermissionIds []int  `json:"permission"`
 }
 
@@ -740,4 +740,11 @@ type WebResponsePermissionUser struct {
 	Name       string        `json:"name"` //名称
 	Token      string        `json:"token"`
 	Permission []*MasterInfo `json:"permission"`
+}
+
+type WebResponseAllWebUser struct {
+	Id            int    `json:"id"`
+	Name          string `json:"name"`
+	LoginName     string `json:"loginname"`
+	PermissionIds []int  `json:"permission"`
 }
