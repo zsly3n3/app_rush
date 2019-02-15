@@ -645,3 +645,7 @@ func (handle *EventHandler) EditWebUser(c *gin.Context) datastruct.CodeType {
 func (handle *EventHandler) GetAllMenuInfo() (interface{}, datastruct.CodeType) {
 	return handle.dbHandler.GetAllMenuInfo()
 }
+
+func (handle *EventHandler) CheckPermission(token string, method string, url string) bool {
+	return handle.dbHandler.CheckPermission(token, method, url)
+}

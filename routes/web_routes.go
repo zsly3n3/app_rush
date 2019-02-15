@@ -1330,7 +1330,21 @@ func getAllMenuInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 	})
 }
 func checkPermission(c *gin.Context, url string) bool {
-	return true
+	rs := false
+	tokens, isExist := c.Request.Header["Apptoken"]
+	if isExist {
+		token = tokens[0]
+		if token != "" {
+			method := c.Request.Method
+			rs = eventHandler.CheckPermission(token, method, url)
+		}
+	}
+	if !rs {
+		c.JSON(200, gin.H{
+			"code": datastruct.WebPermissionDenied,
+		})
+	}
+	return rs
 }
 
 func WebRegister(r *gin.Engine, eventHandler *event.EventHandler) {

@@ -3349,5 +3349,27 @@ func getAllMenu(engine *xorm.Engine) []*datastruct.MasterInfo {
 	return permission
 }
 
+func (handle *DBHandler) CheckPermission(token string, method string, url string) bool {
+	engine := handle.mysqlEngine
+	user := new(datastruct.WebUser)
+	has, err := engine.Where("token=?", token).Get(user)
+	if err != nil || !has {
+		return false
+	}
+	if user.RoleId == datastruct.AdminLevelID {
+		return true
+	}
+	sql := "select count(*) from web_secondary_menu_api wsma join web_permission wp on wsma.secondary_id = wp.secondary_id where wp.user_id = ? and method = ? and url = ?"
+	results, err := engine.Query(sql, user.Id, method, url)
+	if err != nil {
+		return false
+	}
+	count_str := string(results[0]["count(*)"][:])
+	if tools.StringToInt(count_str) <= 0 {
+		return false
+	}
+	return true
+}
+
 // var valuesSlice = make([]interface{}, len(cols))
 // has, err := engine.Where("id = ?", id).Cols(cols...).Get(&valuesSlice)
