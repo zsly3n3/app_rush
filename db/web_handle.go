@@ -3215,6 +3215,7 @@ func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody)
 	var err error
 	var user_id int
 	if !isUpdate {
+		web_user.Pwd = body.Pwd
 		web_user.CreatedAt = now_time
 		web_user.RoleId = datastruct.NormalLevelID
 		web_user.Token = tools.UniqueId()
