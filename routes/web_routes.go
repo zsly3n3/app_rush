@@ -211,7 +211,8 @@ func checkEditGoods(body *datastruct.EditGoodsBody) bool {
 }
 
 func getPurchaseOrder(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/getpurchaseorder", func(c *gin.Context) {
+	url := "/web/getpurchaseorder"
+	r.POST(url, func(c *gin.Context) {
 		if !checkPermission(c, url) {
 			return
 		}
