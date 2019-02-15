@@ -32,7 +32,7 @@ func updateSendInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func updateDefaultAgency(r *gin.Engine, eventHandler *event.EventHandler) {
-	url := "/web/updatesendinfo"
+	url := "/web/defaultagency"
 	r.POST(url, func(c *gin.Context) {
 		if !checkPermission(c, url) {
 			return
