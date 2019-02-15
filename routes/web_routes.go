@@ -54,7 +54,6 @@ func editMemberLevel(r *gin.Engine, eventHandler *event.EventHandler) {
 func getDefaultAgency(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/defaultagency"
 	r.GET(url, func(c *gin.Context) {
-		log.Debug("c.Request.RequestURI:%v", c.Request.RequestURI)
 		if !checkPermission(c, url) {
 			return
 		}
@@ -449,6 +448,7 @@ func editServerInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 
 func updateGoodsClassState(r *gin.Engine, eventHandler *event.EventHandler) {
 	r.GET("/web/updateGoodsClassState/:classid/:ishidden", func(c *gin.Context) {
+		log.Debug("c.Request.RequestURI:%v", c.Request.RequestURI)
 		classid := tools.StringToInt(c.Param("classid"))
 		ishidden := tools.StringToInt(c.Param("ishidden"))
 		code := eventHandler.UpdateGoodsClassState(classid, ishidden)
