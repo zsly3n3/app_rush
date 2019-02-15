@@ -1331,7 +1331,7 @@ func getAllMenuInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 func checkPermission(c *gin.Context, url string, eventHandler *event.EventHandler) bool {
 	rs := false
-	tokens, isExist := c.Request.Header["Apptoken"]
+	tokens, isExist := c.Request.Header["Webtoken"]
 	if isExist {
 		token := tokens[0]
 		if token != "" {
