@@ -40,8 +40,8 @@ func (handle *DBHandler) WebLogin(body *datastruct.WebLoginBody) (interface{}, d
 			m_info.MasterId = master_id
 			m_info.Name = master_name
 			secondary := make([]*datastruct.SecondaryInfo, 0)
-			sql := "select sm.id,sm.name from web_permission wp join secondary_menu sm on wp.secondary_id = sm.id where wp.user_id = ? order by sm.id asc"
-			rs, _ = engine.Query(sql, user.Id)
+			sql := "select sm.id,sm.name from web_permission wp join secondary_menu sm on wp.secondary_id = sm.id join master_menu mm on mm.id = sm.master_id where wp.user_id = ? and mm.id = ? order by sm.id asc"
+			rs, _ = engine.Query(sql, user.Id, master_id)
 			for _, v := range rs {
 				secondaryInfo := new(datastruct.SecondaryInfo)
 				secondaryInfo.Name = string(v["name"][:])
