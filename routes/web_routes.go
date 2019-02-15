@@ -3,13 +3,18 @@ package routes
 import (
 	"app/datastruct"
 	"app/event"
+	"app/log"
 	"app/tools"
 
 	"github.com/gin-gonic/gin"
 )
 
 func editDomain(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/domain", func(c *gin.Context) {
+	url := "/web/domain"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		c.JSON(200, gin.H{
 			"code": eventHandler.EditDomain(c),
 		})
@@ -17,25 +22,42 @@ func editDomain(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func updateSendInfo(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/updatesendinfo", func(c *gin.Context) {
+	url := "/web/updatesendinfo"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		eventHandler.UpdateSendInfo(c)
 	})
 }
 
 func updateDefaultAgency(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/defaultagency", func(c *gin.Context) {
+	url := "/web/updatesendinfo"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		eventHandler.UpdateDefaultAgency(c)
 	})
 }
 
 func editMemberLevel(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/editmemberlevel", func(c *gin.Context) {
+	url := "/web/editmemberlevel"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		eventHandler.EditMemberLevel(c)
 	})
 }
 
 func getDefaultAgency(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.GET("/web/defaultagency", func(c *gin.Context) {
+	url := "/web/defaultagency"
+	r.GET(url, func(c *gin.Context) {
+		log.Debug("c.Request.RequestURI:%v", c.Request.RequestURI)
+		if !checkPermission(c, url) {
+			return
+		}
 		data, code := eventHandler.GetDefaultAgency()
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
@@ -75,10 +97,14 @@ func webLogin(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func editGoods(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/editgoods", func(c *gin.Context) {
+	url := "/web/editgoods"
+	r.POST(url, func(c *gin.Context) {
 		// data1, _ := ioutil.ReadAll(c.Request.Body)
 		// log.Debug("---body/---%v", string(data1))
 		// return
+		if !checkPermission(c, url) {
+			return
+		}
 		var body datastruct.EditGoodsBody
 		err := c.BindJSON(&body)
 		if err != nil || !checkEditGoods(&body) {
@@ -94,7 +120,11 @@ func editGoods(r *gin.Engine, eventHandler *event.EventHandler) {
 	})
 }
 func webGetGoods(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/getgoods", func(c *gin.Context) {
+	url := "/web/getgoods"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		var body datastruct.WebGetGoodsBody
 		err := c.BindJSON(&body)
 		if err != nil || body.PageIndex <= 0 || body.PageSize <= 0 || body.IsHidden < 0 {
@@ -118,7 +148,11 @@ func webGetGoods(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func getDomain(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.GET("/web/domain", func(c *gin.Context) {
+	url := "/web/domain"
+	r.GET(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		data, code := eventHandler.GetDomain()
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
@@ -134,7 +168,11 @@ func getDomain(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func getBlackListJump(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.GET("/web/blacklist", func(c *gin.Context) {
+	url := "/web/blacklist"
+	r.GET(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		data := eventHandler.GetBlackListJump()
 		c.JSON(200, gin.H{
 			"code": datastruct.NULLError,
@@ -144,7 +182,11 @@ func getBlackListJump(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func editBlackListJump(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/blacklist", func(c *gin.Context) {
+	url := "/web/blacklist"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		var body datastruct.BlackListJumpBody
 		err := c.BindJSON(&body)
 		if err != nil {
@@ -170,6 +212,9 @@ func checkEditGoods(body *datastruct.EditGoodsBody) bool {
 
 func getPurchaseOrder(r *gin.Engine, eventHandler *event.EventHandler) {
 	r.POST("/web/getpurchaseorder", func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		var body datastruct.GetPurchaseBody
 		err := c.BindJSON(&body)
 		if err != nil || body.State < 0 || body.State > 2 || body.PageIndex <= 0 || body.PageSize <= 0 {
@@ -1114,6 +1159,11 @@ func getAllMenuInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 			})
 		}
 	})
+}
+
+func checkPermission(c *gin.Context, url string) bool {
+
+	return true
 }
 
 func WebRegister(r *gin.Engine, eventHandler *event.EventHandler) {
