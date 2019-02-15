@@ -628,7 +628,7 @@ func getRandomLotteryGoods(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func editRandomLotteryGoodsPool(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/editlotteryPool", func(c *gin.Context) {
+	r.POST("/web/editlotterypool", func(c *gin.Context) {
 		// data1, _ := ioutil.ReadAll(c.Request.Body)
 		// log.Debug("---body/---%v", string(data1))
 		// return
@@ -1117,77 +1117,75 @@ func getAllMenuInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func WebRegister(r *gin.Engine, eventHandler *event.EventHandler) {
-	editDomain(r, eventHandler)        //添加或修改域名
-	updateSendInfo(r, eventHandler)    //商品已发货
-	webLogin(r, eventHandler)          //web登录
-	editGoods(r, eventHandler)         //添加或修改商品信息
-	webGetGoods(r, eventHandler)       //商品查询
-	getDomain(r, eventHandler)         //获取域名信息
-	getBlackListJump(r, eventHandler)  //获取黑名单跳转信息
-	editBlackListJump(r, eventHandler) //添加或修改黑名单跳转信息
-	getRushOrder(r, eventHandler)      //闯关订单查询
-	getPurchaseOrder(r, eventHandler)  //直接购买订单查询
-
-	getSendGoodsOrder(r, eventHandler)   //发货订单查询
-	updateDefaultAgency(r, eventHandler) //修改默认佣金设置
-	getDefaultAgency(r, eventHandler)    //获取默认佣金设置
-	editMemberLevel(r, eventHandler)
-	getMemberLevel(r, eventHandler)
-	webGetMembers(r, eventHandler)
-	updateUserBlackList(r, eventHandler)
-	updateUserLevel(r, eventHandler)
-	webChangeGold(r, eventHandler)
-	myPrentices(r, eventHandler)
-
-	getServerInfo(r, eventHandler)
-	editServerInfo(r, eventHandler)
-	updateGoodsClassState(r, eventHandler)
-	editGoodsClass(r, eventHandler)
-	getAllGoodsClasses(r, eventHandler)
-	getAllDepositInfo(r, eventHandler)
-	getAllDrawInfo(r, eventHandler)
-	getAllMembers(r, eventHandler)
-	updateMemberLevelState(r, eventHandler)
-	getMemberOrder(r, eventHandler)
-	deleteMemberOrder(r, eventHandler)
-	editRandomLotteryGoods(r, eventHandler)
-	getRandomLotteryGoods(r, eventHandler)
-	editRandomLotteryGoodsPool(r, eventHandler)
-	getRandomLotteryGoodsPool(r, eventHandler)
-	getRandomLotteryOrder(r, eventHandler)
-	updateLotteryGoodsSendState(r, eventHandler)
-	getRushLimitSetting(r, eventHandler)
-	editRushLimitSetting(r, eventHandler)
-	getWebStatistics(r, eventHandler)
-	editReClass(r, eventHandler)
-	getAllReClass(r, eventHandler)
-	editSharePoster(r, eventHandler)
-	getAllSharePosters(r, eventHandler)
-	updateSharePosterState(r, eventHandler)
-	editUserAppraise(r, eventHandler)
-	deleteUserAppraise(r, eventHandler)
-	getUserAppraise(r, eventHandler)
-	updateSignForState(r, eventHandler)
-	editGoodsDetail(r, eventHandler)
-	getGoodsDetail(r, eventHandler)
-	getSCParams(r, eventHandler)
-	updateSCParams(r, eventHandler)
-	getSuggestion(r, eventHandler)
-	deleteSuggestion(r, eventHandler)
-	getComplaint(r, eventHandler)
-	deleteComplaint(r, eventHandler)
-	getDrawCashParams(r, eventHandler)
-	updateDrawCashParams(r, eventHandler)
-	drawCashPass(r, eventHandler)
-	deleteSharePosters(r, eventHandler)
-	deleteAd(r, eventHandler)
-	getAllAd(r, eventHandler)
-	editAd(r, eventHandler)
-	getGoldCoinGift(r, eventHandler)
-	editGoldCoinGift(r, eventHandler)
-	getActiveUsers(r, eventHandler)
-	getWebUsers(r, eventHandler)
-	deleteWebUser(r, eventHandler)
-	editWebUser(r, eventHandler)
-	getAllMenuInfo(r, eventHandler)
+	editDomain(r, eventHandler)                  //添加或修改域名
+	updateSendInfo(r, eventHandler)              //商品已发货
+	webLogin(r, eventHandler)                    //web登录
+	editGoods(r, eventHandler)                   //添加或修改商品信息
+	webGetGoods(r, eventHandler)                 //商品查询
+	getDomain(r, eventHandler)                   //获取域名信息
+	getBlackListJump(r, eventHandler)            //获取黑名单跳转信息
+	editBlackListJump(r, eventHandler)           //添加或修改黑名单跳转信息
+	getRushOrder(r, eventHandler)                //闯关订单查询
+	getPurchaseOrder(r, eventHandler)            //直接购买订单查询
+	getSendGoodsOrder(r, eventHandler)           //发货订单查询
+	updateDefaultAgency(r, eventHandler)         //修改默认佣金设置
+	getDefaultAgency(r, eventHandler)            //获取默认佣金设置
+	editMemberLevel(r, eventHandler)             //添加或修改会员等级信息
+	getMemberLevel(r, eventHandler)              //获取所有会员等级
+	webGetMembers(r, eventHandler)               //会员查询
+	updateUserBlackList(r, eventHandler)         //修改会员黑明单状态
+	updateUserLevel(r, eventHandler)             //修改会员等级
+	webChangeGold(r, eventHandler)               //充值金币
+	myPrentices(r, eventHandler)                 //我的下线
+	getServerInfo(r, eventHandler)               //获取服务器状态信息
+	editServerInfo(r, eventHandler)              //添加或修改服务器状态信息
+	updateGoodsClassState(r, eventHandler)       //修改商品类型状态
+	editGoodsClass(r, eventHandler)              //添加或修改商品类型
+	getAllGoodsClasses(r, eventHandler)          //获取所有商品类型
+	getAllDepositInfo(r, eventHandler)           //查询充值信息
+	getAllDrawInfo(r, eventHandler)              //查询提现信息
+	getAllMembers(r, eventHandler)               //查询所有会员等级信息
+	updateMemberLevelState(r, eventHandler)      //会员等级状态修改
+	getMemberOrder(r, eventHandler)              //获取等级订单
+	deleteMemberOrder(r, eventHandler)           //删除等级订单
+	editRandomLotteryGoods(r, eventHandler)      //添加或修改抽奖商品
+	getRandomLotteryGoods(r, eventHandler)       //抽奖商品查询
+	editRandomLotteryGoodsPool(r, eventHandler)  //编辑抽奖商品池水
+	getRandomLotteryGoodsPool(r, eventHandler)   //获取抽奖商品池水
+	getRandomLotteryOrder(r, eventHandler)       //抽奖订单发货查询
+	updateLotteryGoodsSendState(r, eventHandler) //抽奖商品已发货
+	getRushLimitSetting(r, eventHandler)         //获取闯关限制设置
+	editRushLimitSetting(r, eventHandler)        //编辑闯关限制设置
+	getWebStatistics(r, eventHandler)            //首页统计数据
+	editReClass(r, eventHandler)                 //添加或修改推荐类型
+	getAllReClass(r, eventHandler)               //获取所有推荐类型
+	editSharePoster(r, eventHandler)             //添加或修改分享海报
+	getAllSharePosters(r, eventHandler)          //获取所有分享海报
+	updateSharePosterState(r, eventHandler)      //修改分享海报状态
+	editUserAppraise(r, eventHandler)            //添加或修改用户评价
+	deleteUserAppraise(r, eventHandler)          //删除用户评价
+	getUserAppraise(r, eventHandler)             //获取用户评价
+	updateSignForState(r, eventHandler)          //商品已签收
+	editGoodsDetail(r, eventHandler)             //修改商品详情
+	getGoodsDetail(r, eventHandler)              //获取商品详情
+	getSCParams(r, eventHandler)                 //获取建议与投诉参数设置
+	updateSCParams(r, eventHandler)              //修改建议与投诉参数设置
+	getSuggestion(r, eventHandler)               //查询用户反馈
+	deleteSuggestion(r, eventHandler)            //删除用户反馈
+	getComplaint(r, eventHandler)                //查询用户投诉
+	deleteComplaint(r, eventHandler)             //删除用户投诉
+	getDrawCashParams(r, eventHandler)           //获取提现参数
+	updateDrawCashParams(r, eventHandler)        //修改提现参数
+	drawCashPass(r, eventHandler)                //提现审核通过
+	deleteSharePosters(r, eventHandler)          //删除分享海报
+	deleteAd(r, eventHandler)                    //删除广告
+	getAllAd(r, eventHandler)                    //查询广告
+	editAd(r, eventHandler)                      //添加或修改广告
+	getGoldCoinGift(r, eventHandler)             //获取金币赠送设置
+	editGoldCoinGift(r, eventHandler)            //修改金币赠送设置
+	getActiveUsers(r, eventHandler)              //活跃用户数
+	getWebUsers(r, eventHandler)                 //获取web用户
+	deleteWebUser(r, eventHandler)               //删除web用户
+	editWebUser(r, eventHandler)                 //添加或修改web用户
+	getAllMenuInfo(r, eventHandler)              //获取所有菜单信息
 }
