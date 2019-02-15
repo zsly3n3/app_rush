@@ -81,6 +81,7 @@ const (
 	PayeeReview                                 //金额数额过大,提现审核中
 	DateTooLong                                 //查询日期过长
 	WebPermissionDenied                         //web权限拒绝
+	LoginNameAlreadyExisted                     //登陆名已存在
 )
 
 type Platform int //平台

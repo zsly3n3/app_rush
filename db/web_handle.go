@@ -3200,6 +3200,18 @@ func (handle *DBHandler) EditGoldCoinGift(body *datastruct.WebResponseGoldCoinGi
 
 func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody) datastruct.CodeType {
 	engine := handle.mysqlEngine
+
+	sql := "select count(*) from web_user where login_name = ?"
+	results, err := engine.Query(sql, body.LoginName)
+	if err != nil {
+		log.Debug("EditWebUser Query sql err:%v", err.Error())
+		return datastruct.UpdateDataFailed
+	}
+	count_str := string(results[0]["count(*)"][:])
+	if tools.StringToInt(count_str) > 0 {
+		return datastruct.LoginNameAlreadyExisted
+	}
+
 	session := engine.NewSession()
 	defer session.Close()
 	session.Begin()
@@ -3212,7 +3224,6 @@ func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody)
 	web_user.LoginName = body.LoginName
 	web_user.Name = body.Name
 	web_user.UpdatedAt = now_time
-	var err error
 	var user_id int
 	if !isUpdate {
 		web_user.Pwd = body.Pwd
