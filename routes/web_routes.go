@@ -589,7 +589,7 @@ func getAllDrawInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func getAllMembers(r *gin.Engine, eventHandler *event.EventHandler) {
-	url:= "/web/availablemembers"
+	url := "/web/availablemembers"
 	r.GET(url, func(c *gin.Context) {
 		if !checkPermission(c, url) {
 			return
@@ -609,7 +609,7 @@ func getAllMembers(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func updateMemberLevelState(r *gin.Engine, eventHandler *event.EventHandler) {
-	url:="/web/memberstate"
+	url := "/web/memberstate"
 	r.POST(url, func(c *gin.Context) {
 		if !checkPermission(c, url) {
 			return
@@ -621,59 +621,12 @@ func updateMemberLevelState(r *gin.Engine, eventHandler *event.EventHandler) {
 	})
 }
 
-
-
-func getTotalEarn(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/totaleran", func(c *gin.Context) {
-		data, code := eventHandler.GetTotalEarn(c)
-		if code == datastruct.NULLError {
-			c.JSON(200, gin.H{
-				"code": code,
-				"data": data,
-			})
-		} else {
-			c.JSON(200, gin.H{
-				"code": code,
-			})
-		}
-	})
-}
-
-func getDepositUsers(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/depositusers", func(c *gin.Context) {
-		data, code := eventHandler.GetDepositUsers(c)
-		if code == datastruct.NULLError {
-			c.JSON(200, gin.H{
-				"code": code,
-				"data": data,
-			})
-		} else {
-			c.JSON(200, gin.H{
-				"code": code,
-			})
-		}
-	})
-}
-
-func getActivityUsers(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/activityusers", func(c *gin.Context) {
-		data, code := eventHandler.GetActivityUsers(c)
-		if code == datastruct.NULLError {
-			c.JSON(200, gin.H{
-				"code": code,
-				"data": data,
-			})
-		} else {
-			c.JSON(200, gin.H{
-				"code": code,
-			})
-		}
-	})
-}
-*/
-
 func getMemberOrder(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/getmemberorder", func(c *gin.Context) {
+	url := "/web/getmemberorder"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		data, code := eventHandler.GetMemberOrder(c)
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
@@ -689,7 +642,11 @@ func getMemberOrder(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func deleteMemberOrder(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/deletememberorder", func(c *gin.Context) {
+	url := "/web/deletememberorder"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		c.JSON(200, gin.H{
 			"code": eventHandler.DeleteMemberOrder(c),
 		})
@@ -697,10 +654,14 @@ func deleteMemberOrder(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func editRandomLotteryGoods(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/editlotterygoods", func(c *gin.Context) {
+	url := "/web/editlotterygoods"
+	r.POST(url, func(c *gin.Context) {
 		// data1, _ := ioutil.ReadAll(c.Request.Body)
 		// log.Debug("---body/---%v", string(data1))
 		// return
+		if !checkPermission(c, url) {
+			return
+		}
 		code := eventHandler.EditRandomLotteryGoods(c)
 		c.JSON(200, gin.H{
 			"code": code,
@@ -709,7 +670,11 @@ func editRandomLotteryGoods(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func getRandomLotteryGoods(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/getlotterygoods", func(c *gin.Context) {
+	url := "/web/getlotterygoods"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		data, code := eventHandler.GetRandomLotteryGoods(c)
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
@@ -725,10 +690,14 @@ func getRandomLotteryGoods(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func editRandomLotteryGoodsPool(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/editlotterypool", func(c *gin.Context) {
+	url := "/web/editlotterypool"
+	r.POST(url, func(c *gin.Context) {
 		// data1, _ := ioutil.ReadAll(c.Request.Body)
 		// log.Debug("---body/---%v", string(data1))
 		// return
+		if !checkPermission(c, url) {
+			return
+		}
 		code := eventHandler.EditRandomLotteryGoodsPool(c)
 		c.JSON(200, gin.H{
 			"code": code,
@@ -737,7 +706,11 @@ func editRandomLotteryGoodsPool(r *gin.Engine, eventHandler *event.EventHandler)
 }
 
 func getRandomLotteryGoodsPool(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.GET("/web/getlotterypool", func(c *gin.Context) {
+	url := "/web/getlotterypool"
+	r.GET(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		data, code := eventHandler.GetRandomLotteryGoodsPool()
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
@@ -753,7 +726,11 @@ func getRandomLotteryGoodsPool(r *gin.Engine, eventHandler *event.EventHandler) 
 }
 
 func getRandomLotteryOrder(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/getlotteryorder", func(c *gin.Context) {
+	url := "/web/getlotteryorder"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		var body datastruct.GetSendGoodsBody
 		err := c.BindJSON(&body)
 		if err != nil || body.State < 0 || body.State > 2 || body.PageIndex <= 0 || body.PageSize <= 0 {
@@ -777,7 +754,11 @@ func getRandomLotteryOrder(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func updateLotteryGoodsSendState(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/updatelotterysendstate", func(c *gin.Context) {
+	url := "/web/updatelotterysendstate"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		c.JSON(200, gin.H{
 			"code": eventHandler.UpdateLotteryGoodsSendState(c),
 		})
@@ -785,7 +766,11 @@ func updateLotteryGoodsSendState(r *gin.Engine, eventHandler *event.EventHandler
 }
 
 func getRushLimitSetting(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.GET("/web/getrushlimitsetting", func(c *gin.Context) {
+	url := "/web/getrushlimitsetting"
+	r.GET(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		data, code := eventHandler.GetRushLimitSetting()
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
@@ -801,10 +786,14 @@ func getRushLimitSetting(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func editRushLimitSetting(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/editrushlimitsetting", func(c *gin.Context) {
+	url := "/web/editrushlimitsetting"
+	r.POST(url, func(c *gin.Context) {
 		// data1, _ := ioutil.ReadAll(c.Request.Body)
 		// log.Debug("---body/---%v", string(data1))
 		// return
+		if !checkPermission(c, url) {
+			return
+		}
 		code := eventHandler.EditRushLimitSetting(c)
 		c.JSON(200, gin.H{
 			"code": code,
@@ -813,7 +802,11 @@ func editRushLimitSetting(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func getWebStatistics(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/statistics", func(c *gin.Context) {
+	url := "/web/statistics"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		data, code := eventHandler.GetWebStatistics(c)
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
@@ -829,7 +822,11 @@ func getWebStatistics(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func getActiveUsers(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/activeUsers", func(c *gin.Context) {
+	url := "/web/activeusers"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		data, code := eventHandler.GetActiveUsers(c)
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
@@ -845,10 +842,14 @@ func getActiveUsers(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func editReClass(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/editreclass", func(c *gin.Context) {
+	url := "/web/editreclass"
+	r.POST(url, func(c *gin.Context) {
 		// data1, _ := ioutil.ReadAll(c.Request.Body)
 		// log.Debug("---body/---%v", string(data1))
 		// return
+		if !checkPermission(c, url) {
+			return
+		}
 		code := eventHandler.EditReClass(c)
 		c.JSON(200, gin.H{
 			"code": code,
@@ -857,7 +858,11 @@ func editReClass(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func getAllReClass(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/getallreclasses", func(c *gin.Context) {
+	url := "/web/getallreclasses"
+	r.POST(url, func(c *gin.Context) {
+		if !checkPermission(c, url) {
+			return
+		}
 		data, code := eventHandler.GetAllReClass(c)
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
@@ -873,10 +878,14 @@ func getAllReClass(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func editSharePoster(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/web/editshareposter", func(c *gin.Context) {
+	url := "/web/editshareposter"
+	r.POST(url, func(c *gin.Context) {
 		// data1, _ := ioutil.ReadAll(c.Request.Body)
 		// log.Debug("---body/---%v", string(data1))
 		// return
+		if !checkPermission(c, url) {
+			return
+		}
 		code := eventHandler.EditSharePoster(c)
 		c.JSON(200, gin.H{
 			"code": code,
