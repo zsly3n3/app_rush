@@ -3306,7 +3306,7 @@ func (handle *DBHandler) GetWebUsers() (interface{}, datastruct.CodeType) {
 	web_users := make([]*datastruct.WebResponseAllWebUser, 0)
 	for _, v := range users {
 		user := new(datastruct.WebResponseAllWebUser)
-		user.Id = v.Ids
+		user.Id = v.Id
 		user.LoginName = v.LoginName
 		user.Name = v.Name
 		permission := make([]datastruct.WebPermission, 0)
