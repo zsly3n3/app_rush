@@ -11,7 +11,8 @@ import (
 func editDomain(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/domain"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		c.JSON(200, gin.H{
@@ -23,7 +24,8 @@ func editDomain(r *gin.Engine, eventHandler *event.EventHandler) {
 func updateSendInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/updatesendinfo"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		eventHandler.UpdateSendInfo(c)
@@ -33,7 +35,8 @@ func updateSendInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 func updateDefaultAgency(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/defaultagency"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		eventHandler.UpdateDefaultAgency(c)
@@ -43,7 +46,8 @@ func updateDefaultAgency(r *gin.Engine, eventHandler *event.EventHandler) {
 func editMemberLevel(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/editmemberlevel"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		eventHandler.EditMemberLevel(c)
@@ -53,7 +57,8 @@ func editMemberLevel(r *gin.Engine, eventHandler *event.EventHandler) {
 func getDefaultAgency(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/defaultagency"
 	r.GET(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetDefaultAgency()
@@ -100,7 +105,8 @@ func editGoods(r *gin.Engine, eventHandler *event.EventHandler) {
 		// data1, _ := ioutil.ReadAll(c.Request.Body)
 		// log.Debug("---body/---%v", string(data1))
 		// return
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		var body datastruct.EditGoodsBody
@@ -120,7 +126,8 @@ func editGoods(r *gin.Engine, eventHandler *event.EventHandler) {
 func webGetGoods(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/getgoods"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		var body datastruct.WebGetGoodsBody
@@ -148,7 +155,8 @@ func webGetGoods(r *gin.Engine, eventHandler *event.EventHandler) {
 func getDomain(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/domain"
 	r.GET(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetDomain()
@@ -168,7 +176,8 @@ func getDomain(r *gin.Engine, eventHandler *event.EventHandler) {
 func getBlackListJump(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/blacklist"
 	r.GET(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data := eventHandler.GetBlackListJump()
@@ -182,7 +191,8 @@ func getBlackListJump(r *gin.Engine, eventHandler *event.EventHandler) {
 func editBlackListJump(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/blacklist"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		var body datastruct.BlackListJumpBody
@@ -211,7 +221,8 @@ func checkEditGoods(body *datastruct.EditGoodsBody) bool {
 func getPurchaseOrder(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/getpurchaseorder"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		var body datastruct.GetPurchaseBody
@@ -242,7 +253,8 @@ func getRushOrder(r *gin.Engine, eventHandler *event.EventHandler) {
 		// data1, _ := ioutil.ReadAll(c.Request.Body)
 		// log.Debug("---body/---%v", string(data1))
 		// return
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		var body datastruct.GetRushOrderBody
@@ -270,7 +282,8 @@ func getRushOrder(r *gin.Engine, eventHandler *event.EventHandler) {
 func getSendGoodsOrder(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/getsendgoods"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		var body datastruct.GetSendGoodsBody
@@ -298,7 +311,8 @@ func getSendGoodsOrder(r *gin.Engine, eventHandler *event.EventHandler) {
 func getMemberLevel(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/getmemberlevel"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		var body datastruct.GetMemberLevelDataBody
@@ -326,7 +340,8 @@ func getMemberLevel(r *gin.Engine, eventHandler *event.EventHandler) {
 func webGetMembers(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/getmembers"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		var body datastruct.WebGetMembersBody
@@ -354,7 +369,8 @@ func webGetMembers(r *gin.Engine, eventHandler *event.EventHandler) {
 func updateUserBlackList(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/updateuserbl"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		var body datastruct.WebUpdateUserBlBody
@@ -374,7 +390,8 @@ func updateUserBlackList(r *gin.Engine, eventHandler *event.EventHandler) {
 func updateUserLevel(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/updateuserlevel"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		var body datastruct.WebUpdateUserLevelBody
@@ -393,7 +410,8 @@ func updateUserLevel(r *gin.Engine, eventHandler *event.EventHandler) {
 func webChangeGold(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/addgoldcount"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		var body datastruct.WebAddGoldBody
@@ -420,7 +438,8 @@ func webChangeGold(r *gin.Engine, eventHandler *event.EventHandler) {
 func myPrentices(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/myprentices"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		var body datastruct.WebGetAgencyInfoBody
@@ -448,7 +467,8 @@ func myPrentices(r *gin.Engine, eventHandler *event.EventHandler) {
 func getServerInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/serverinfo"
 	r.GET(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetServerInfoFromDB()
@@ -468,7 +488,8 @@ func getServerInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 func editServerInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/serverinfo"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		var body datastruct.WebServerInfoBody
@@ -488,7 +509,8 @@ func editServerInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 func updateGoodsClassState(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/updateGoodsClassState/:classid/:ishidden"
 	r.GET(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		classid := tools.StringToInt(c.Param("classid"))
@@ -503,7 +525,8 @@ func updateGoodsClassState(r *gin.Engine, eventHandler *event.EventHandler) {
 func editGoodsClass(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/editgoodsclass"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		var body datastruct.WebEditGoodsClassBody
@@ -523,7 +546,8 @@ func editGoodsClass(r *gin.Engine, eventHandler *event.EventHandler) {
 func getAllGoodsClasses(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/allgoodsclasses"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		var body datastruct.WebQueryGoodsClassBody
@@ -551,7 +575,8 @@ func getAllGoodsClasses(r *gin.Engine, eventHandler *event.EventHandler) {
 func getAllDepositInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/querydepositinfo"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetAllDepositInfo(c)
@@ -571,7 +596,8 @@ func getAllDepositInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 func getAllDrawInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/querydrawinfo"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetAllDrawInfo(c)
@@ -591,7 +617,8 @@ func getAllDrawInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 func getAllMembers(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/availablemembers"
 	r.GET(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetAllMembers()
@@ -611,7 +638,8 @@ func getAllMembers(r *gin.Engine, eventHandler *event.EventHandler) {
 func updateMemberLevelState(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/memberstate"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		code := eventHandler.UpdateMemberLevelState(c)
@@ -624,7 +652,8 @@ func updateMemberLevelState(r *gin.Engine, eventHandler *event.EventHandler) {
 func getMemberOrder(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/getmemberorder"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetMemberOrder(c)
@@ -644,7 +673,8 @@ func getMemberOrder(r *gin.Engine, eventHandler *event.EventHandler) {
 func deleteMemberOrder(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/deletememberorder"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		c.JSON(200, gin.H{
@@ -659,7 +689,8 @@ func editRandomLotteryGoods(r *gin.Engine, eventHandler *event.EventHandler) {
 		// data1, _ := ioutil.ReadAll(c.Request.Body)
 		// log.Debug("---body/---%v", string(data1))
 		// return
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		code := eventHandler.EditRandomLotteryGoods(c)
@@ -672,7 +703,8 @@ func editRandomLotteryGoods(r *gin.Engine, eventHandler *event.EventHandler) {
 func getRandomLotteryGoods(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/getlotterygoods"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetRandomLotteryGoods(c)
@@ -695,7 +727,8 @@ func editRandomLotteryGoodsPool(r *gin.Engine, eventHandler *event.EventHandler)
 		// data1, _ := ioutil.ReadAll(c.Request.Body)
 		// log.Debug("---body/---%v", string(data1))
 		// return
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		code := eventHandler.EditRandomLotteryGoodsPool(c)
@@ -708,7 +741,8 @@ func editRandomLotteryGoodsPool(r *gin.Engine, eventHandler *event.EventHandler)
 func getRandomLotteryGoodsPool(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/getlotterypool"
 	r.GET(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetRandomLotteryGoodsPool()
@@ -728,7 +762,8 @@ func getRandomLotteryGoodsPool(r *gin.Engine, eventHandler *event.EventHandler) 
 func getRandomLotteryOrder(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/getlotteryorder"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		var body datastruct.GetSendGoodsBody
@@ -756,7 +791,8 @@ func getRandomLotteryOrder(r *gin.Engine, eventHandler *event.EventHandler) {
 func updateLotteryGoodsSendState(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/updatelotterysendstate"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		c.JSON(200, gin.H{
@@ -768,7 +804,8 @@ func updateLotteryGoodsSendState(r *gin.Engine, eventHandler *event.EventHandler
 func getRushLimitSetting(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/getrushlimitsetting"
 	r.GET(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetRushLimitSetting()
@@ -791,7 +828,8 @@ func editRushLimitSetting(r *gin.Engine, eventHandler *event.EventHandler) {
 		// data1, _ := ioutil.ReadAll(c.Request.Body)
 		// log.Debug("---body/---%v", string(data1))
 		// return
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		code := eventHandler.EditRushLimitSetting(c)
@@ -804,7 +842,8 @@ func editRushLimitSetting(r *gin.Engine, eventHandler *event.EventHandler) {
 func getWebStatistics(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/statistics"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetWebStatistics(c)
@@ -824,7 +863,8 @@ func getWebStatistics(r *gin.Engine, eventHandler *event.EventHandler) {
 func getActiveUsers(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/activeusers"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetActiveUsers(c)
@@ -847,7 +887,8 @@ func editReClass(r *gin.Engine, eventHandler *event.EventHandler) {
 		// data1, _ := ioutil.ReadAll(c.Request.Body)
 		// log.Debug("---body/---%v", string(data1))
 		// return
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		code := eventHandler.EditReClass(c)
@@ -860,7 +901,8 @@ func editReClass(r *gin.Engine, eventHandler *event.EventHandler) {
 func getAllReClass(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/getallreclasses"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetAllReClass(c)
@@ -883,7 +925,8 @@ func editSharePoster(r *gin.Engine, eventHandler *event.EventHandler) {
 		// data1, _ := ioutil.ReadAll(c.Request.Body)
 		// log.Debug("---body/---%v", string(data1))
 		// return
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		code := eventHandler.EditSharePoster(c)
@@ -896,7 +939,8 @@ func editSharePoster(r *gin.Engine, eventHandler *event.EventHandler) {
 func getAllSharePosters(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/allshareposters"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetAllSharePosters(c)
@@ -916,7 +960,8 @@ func getAllSharePosters(r *gin.Engine, eventHandler *event.EventHandler) {
 func updateSharePosterState(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/updateposterstate"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		code := eventHandler.UpdateSharePosterState(c)
@@ -932,7 +977,8 @@ func editUserAppraise(r *gin.Engine, eventHandler *event.EventHandler) {
 		// data1, _ := ioutil.ReadAll(c.Request.Body)
 		// log.Debug("---body/---%v", string(data1))
 		// return
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		code := eventHandler.EditUserAppraise(c)
@@ -947,7 +993,8 @@ func deleteUserAppraise(r *gin.Engine, eventHandler *event.EventHandler) {
 		// data1, _ := ioutil.ReadAll(c.Request.Body)
 		// log.Debug("---body/---%v", string(data1))
 		// return
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		code := eventHandler.DeleteUserAppraise(c)
@@ -960,7 +1007,8 @@ func deleteUserAppraise(r *gin.Engine, eventHandler *event.EventHandler) {
 func getUserAppraise(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/getuserappraise"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetUserAppraise(c)
@@ -979,7 +1027,8 @@ func getUserAppraise(r *gin.Engine, eventHandler *event.EventHandler) {
 func updateSignForState(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/updatesignforstate"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		c.JSON(200, gin.H{
@@ -994,7 +1043,8 @@ func editGoodsDetail(r *gin.Engine, eventHandler *event.EventHandler) {
 		// data1, _ := ioutil.ReadAll(c.Request.Body)
 		// log.Debug("---body/---%v", string(data1))
 		// return
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		code := eventHandler.EditGoodsDetail(c)
@@ -1006,7 +1056,8 @@ func editGoodsDetail(r *gin.Engine, eventHandler *event.EventHandler) {
 func getGoodsDetail(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/goodsdetail/:goodsid"
 	r.GET(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		goodsid := tools.StringToInt(c.Param("goodsid"))
@@ -1033,7 +1084,8 @@ func getGoodsDetail(r *gin.Engine, eventHandler *event.EventHandler) {
 func getSCParams(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/scparams"
 	r.GET(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetSCParams()
@@ -1053,7 +1105,8 @@ func getSCParams(r *gin.Engine, eventHandler *event.EventHandler) {
 func updateSCParams(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/scparams"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		code := eventHandler.UpdateSCParams(c)
@@ -1066,7 +1119,8 @@ func updateSCParams(r *gin.Engine, eventHandler *event.EventHandler) {
 func getSuggestion(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/getsuggest"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetSuggestion(c)
@@ -1086,7 +1140,8 @@ func getSuggestion(r *gin.Engine, eventHandler *event.EventHandler) {
 func deleteSuggestion(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/delsuggestion"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		code := eventHandler.DeleteSuggestion(c)
@@ -1099,7 +1154,8 @@ func deleteSuggestion(r *gin.Engine, eventHandler *event.EventHandler) {
 func deleteComplaint(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/delcomplaint"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		code := eventHandler.DeleteComplaint(c)
@@ -1112,7 +1168,8 @@ func deleteComplaint(r *gin.Engine, eventHandler *event.EventHandler) {
 func getComplaint(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/getcomplaint"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetComplaint(c)
@@ -1132,7 +1189,8 @@ func getComplaint(r *gin.Engine, eventHandler *event.EventHandler) {
 func getDrawCashParams(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/drawcashparams"
 	r.GET(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetDrawCashParams()
@@ -1152,7 +1210,8 @@ func getDrawCashParams(r *gin.Engine, eventHandler *event.EventHandler) {
 func updateDrawCashParams(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/drawcashparams"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		code := eventHandler.UpdateDrawCashParams(c)
@@ -1165,7 +1224,8 @@ func updateDrawCashParams(r *gin.Engine, eventHandler *event.EventHandler) {
 func drawCashPass(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/drawcashpass"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		code := eventHandler.DrawCashPass(c)
@@ -1178,7 +1238,8 @@ func drawCashPass(r *gin.Engine, eventHandler *event.EventHandler) {
 func deleteSharePosters(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/delposters"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		code := eventHandler.DeleteSharePosters(c)
@@ -1191,7 +1252,8 @@ func deleteSharePosters(r *gin.Engine, eventHandler *event.EventHandler) {
 func deleteAd(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/deletead"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		code := eventHandler.DeleteAd(c)
@@ -1204,7 +1266,8 @@ func deleteAd(r *gin.Engine, eventHandler *event.EventHandler) {
 func getAllAd(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/adinfo"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetAllAd(c)
@@ -1224,7 +1287,8 @@ func getAllAd(r *gin.Engine, eventHandler *event.EventHandler) {
 func editAd(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/editadinfo"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		c.JSON(200, gin.H{
@@ -1236,7 +1300,8 @@ func editAd(r *gin.Engine, eventHandler *event.EventHandler) {
 func getGoldCoinGift(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/goldcoingift"
 	r.GET(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetGoldCoinGift()
@@ -1256,7 +1321,8 @@ func getGoldCoinGift(r *gin.Engine, eventHandler *event.EventHandler) {
 func editGoldCoinGift(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/goldcoingift"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		c.JSON(200, gin.H{
@@ -1268,7 +1334,8 @@ func editGoldCoinGift(r *gin.Engine, eventHandler *event.EventHandler) {
 func getWebUsers(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/webusers"
 	r.GET(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetWebUsers()
@@ -1288,7 +1355,8 @@ func getWebUsers(r *gin.Engine, eventHandler *event.EventHandler) {
 func deleteWebUser(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/deletewebuser"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		code := eventHandler.DeleteWebUser(c)
@@ -1301,7 +1369,8 @@ func deleteWebUser(r *gin.Engine, eventHandler *event.EventHandler) {
 func editWebUser(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/editwebuser"
 	r.POST(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		c.JSON(200, gin.H{
@@ -1313,7 +1382,8 @@ func editWebUser(r *gin.Engine, eventHandler *event.EventHandler) {
 func getAllMenuInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/allmenu"
 	r.GET(url, func(c *gin.Context) {
-		if !checkPermission(c, url, eventHandler) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
 			return
 		}
 		data, code := eventHandler.GetAllMenuInfo()
