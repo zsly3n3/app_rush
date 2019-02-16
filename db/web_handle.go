@@ -3198,26 +3198,34 @@ func (handle *DBHandler) EditGoldCoinGift(body *datastruct.WebResponseGoldCoinGi
 	return datastruct.NULLError
 }
 
-func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody) datastruct.CodeType {
+func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody, token string) datastruct.CodeType {
 	engine := handle.mysqlEngine
-	sql := "select count(*) from web_user where login_name = ?"
+	isUpdate := false
+	if body.Id > 0 {
+		isUpdate = true
+	}
+	sql := "select token from web_user where login_name = ?"
 	results, err := engine.Query(sql, body.LoginName)
 	if err != nil {
 		log.Debug("EditWebUser Query sql err:%v", err.Error())
 		return datastruct.UpdateDataFailed
 	}
-	count_str := string(results[0]["count(*)"][:])
-	if tools.StringToInt(count_str) > 0 {
-		return datastruct.LoginNameAlreadyExisted
+	count := len(results)
+	if count > 0 {
+		if isUpdate {
+			query_token := string(results[0]["token"][:])
+			if count >= 2 || query_token != token {
+				return datastruct.LoginNameAlreadyExisted
+			}
+		} else {
+			return datastruct.LoginNameAlreadyExisted
+		}
 	}
 
 	session := engine.NewSession()
 	defer session.Close()
 	session.Begin()
-	isUpdate := false
-	if body.Id > 0 {
-		isUpdate = true
-	}
+
 	now_time := time.Now().Unix()
 	web_user := new(datastruct.WebUser)
 	web_user.LoginName = body.LoginName
