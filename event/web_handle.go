@@ -668,7 +668,7 @@ func (handle *EventHandler) UpdateWebUserPwd(c *gin.Context) datastruct.CodeType
 }
 
 func (handle *EventHandler) GetCommissionStatistics(c *gin.Context) (interface{}, datastruct.CodeType) {
-	var body datastruct.WebActiveUserBody
+	var body datastruct.WebCommissionStatisticsBody
 	err := c.BindJSON(&body)
 	if err != nil || body.StartTime < 0 || body.EndTime < 0 || body.StartTime >= body.EndTime {
 		return nil, datastruct.ParamError
@@ -681,10 +681,9 @@ func (handle *EventHandler) GetCommissionStatistics(c *gin.Context) (interface{}
 	list := make([]interface{}, 0)
 	startTime := body.StartTime
 	for {
-		new_body := new(datastruct.WebActiveUserBody)
+		new_body := new(datastruct.WebCommissionStatisticsBody)
 		new_body.StartTime = startTime
 		new_body.EndTime = startTime + day_sec
-		new_body.RPlatform = body.RPlatform
 		rs, _ := handle.dbHandler.GetCommissionStatistics(new_body)
 		list = append(list, rs)
 		if new_body.EndTime >= body.EndTime {
