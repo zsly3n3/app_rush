@@ -3215,6 +3215,7 @@ func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody,
 		if isUpdate {
 			query_token := string(results[0]["token"][:])
 			if count >= 2 || query_token != token {
+				log.Debug("------------11111111111")
 				return datastruct.LoginNameAlreadyExisted
 			}
 		} else {
@@ -3393,7 +3394,8 @@ func (handle *DBHandler) UpdateWebUserPwd(body *datastruct.WebUserPwdBody, token
 	engine := handle.mysqlEngine
 	user := new(datastruct.WebUser)
 	user.Pwd = body.NewPwd
-	rs, err := engine.Where("token = ? and pwd = ?", token, body.OldPwd).Cols("pwd").Update(user)
+	user.Token = tools.UniqueId()
+	rs, err := engine.Where("token = ? and pwd = ?", token, body.OldPwd).Cols("pwd", "token").Update(user)
 	if err != nil {
 		log.Error("UpdateWebUserPwd err:%v", err.Error())
 		return datastruct.UpdateDataFailed
