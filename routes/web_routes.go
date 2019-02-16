@@ -1329,12 +1329,14 @@ func getAllMenuInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 		}
 	})
 }
-func checkPermission(c *gin.Context, url string, eventHandler *event.EventHandler) bool {
+func checkPermission(c *gin.Context, url string, eventHandler *event.EventHandler) (string, bool) {
 	rs := false
 	tokens, isExist := c.Request.Header["Webtoken"]
+	var rs_token string
 	if isExist {
 		token := tokens[0]
 		if token != "" {
+			rs_token = token
 			method := c.Request.Method
 			rs = eventHandler.CheckPermission(token, method, url)
 		}
@@ -1344,7 +1346,20 @@ func checkPermission(c *gin.Context, url string, eventHandler *event.EventHandle
 			"code": datastruct.WebPermissionDenied,
 		})
 	}
-	return rs
+	return rs_token, rs
+}
+
+func updateWebUserPwd(r *gin.Engine, eventHandler *event.EventHandler) {
+	url := "/web/updatepwd"
+	r.POST(url, func(c *gin.Context) {
+		token, tf := checkPermission(c, url, eventHandler)
+		if !tf {
+			return
+		}
+		c.JSON(200, gin.H{
+			"code": eventHandler.UpdateWebUserPwd(c, token),
+		})
+	})
 }
 
 func WebRegister(r *gin.Engine, eventHandler *event.EventHandler) {
@@ -1419,4 +1434,5 @@ func WebRegister(r *gin.Engine, eventHandler *event.EventHandler) {
 	deleteWebUser(r, eventHandler)               //删除web用户
 	editWebUser(r, eventHandler)                 //添加或修改web用户
 	getAllMenuInfo(r, eventHandler)              //获取所有菜单信息
+	updateWebUserPwd(r, eventHandler)
 }

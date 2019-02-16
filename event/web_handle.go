@@ -649,3 +649,12 @@ func (handle *EventHandler) GetAllMenuInfo() (interface{}, datastruct.CodeType) 
 func (handle *EventHandler) CheckPermission(token string, method string, url string) bool {
 	return handle.dbHandler.CheckPermission(token, method, url)
 }
+
+func (handle *EventHandler) UpdateWebUserPwd(c *gin.Context, token string) datastruct.CodeType {
+	var body datastruct.WebUserPwdBody
+	err := c.BindJSON(&body)
+	if err != nil || body.NewPwd == "" || body.OldPwd == "" {
+		return datastruct.ParamError
+	}
+	return handle.dbHandler.UpdateWebUserPwd(&body, token)
+}

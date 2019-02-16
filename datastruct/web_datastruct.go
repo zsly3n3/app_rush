@@ -347,6 +347,11 @@ type WebEditPermissionUserBody struct {
 	PermissionIds []int  `json:"permission"`
 }
 
+type WebUserPwdBody struct {
+	OldPwd string `json:"oldpwd"`
+	NewPwd string `json:"newpwd"`
+}
+
 //Web Response
 type WebResponseGoods struct {
 	Total int                     `json:"total"`

@@ -3200,7 +3200,6 @@ func (handle *DBHandler) EditGoldCoinGift(body *datastruct.WebResponseGoldCoinGi
 
 func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody) datastruct.CodeType {
 	engine := handle.mysqlEngine
-
 	sql := "select count(*) from web_user where login_name = ?"
 	results, err := engine.Query(sql, body.LoginName)
 	if err != nil {
@@ -3380,6 +3379,22 @@ func (handle *DBHandler) CheckPermission(token string, method string, url string
 		return false
 	}
 	return true
+}
+
+func (handle *DBHandler) UpdateWebUserPwd(body *datastruct.WebUserPwdBody, token string) datastruct.CodeType {
+	engine := handle.mysqlEngine
+	user := new(datastruct.WebUser)
+	user.Pwd = body.NewPwd
+	rs, err := engine.Where("token = ? and pwd = ?", token, body.OldPwd).Cols("pwd").Update(user)
+	if err != nil {
+		log.Error("UpdateWebUserPwd err:%v", err.Error())
+		return datastruct.UpdateDataFailed
+	}
+	if rs <= 0 {
+		log.Error("UpdateWebUserPwd affected row:%v", rs)
+		return datastruct.UpdateDataFailed
+	}
+	return datastruct.NULLError
 }
 
 // var valuesSlice = make([]interface{}, len(cols))
