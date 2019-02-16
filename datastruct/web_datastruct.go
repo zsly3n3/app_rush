@@ -231,6 +231,11 @@ type WebActiveUserBody struct {
 	RPlatform Platform `json:"registerplatform"`
 }
 
+type WebCommissionStatisticsBody struct {
+	StartTime int64 `json:"starttime"`
+	EndTime   int64 `json:"endtime"`
+}
+
 type WebMemberOrderBody struct {
 	Name      string `json:"nickname"`
 	LevelName string `json:"levelname"`
@@ -642,9 +647,12 @@ type WebResponseActiveUsers struct {
 }
 
 type WebResponseCommissionStatistics struct {
-	NewUsers    int64  `json:"newusers"`    //
-	ActiveUsers int64  `json:"activeusers"` //活跃用户数
-	Date        string `json:"date"`        //日期
+	DepositTotal       float64 `json:"deposittotal"`    //充值总额
+	BalanceTotal       float64 `json:"commissiontotal"` //总提成佣金
+	DrawTotal          float64 `json:"drawtotal"`       //已提现总额
+	RemainingDrawTotal float64 `json:"rdt"`             //待提现总额
+	Profit             float64 `json:"profit"`          //营收利润
+	Date               string  `json:"date"`            //日期
 }
 
 type WebResponseGoodsClass struct {

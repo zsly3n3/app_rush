@@ -1397,57 +1397,6 @@ type webDepositInfo struct {
 	datastruct.BalanceInfo     `xorm:"extends"`
 }
 
-func (handle *DBHandler) GetAllDepositInfo(body *datastruct.WebQueryDepositInfoBody) (interface{}, datastruct.CodeType) {
-	engine := handle.mysqlEngine
-	resp := new(datastruct.WebResponseDepositInfo)
-	userDepositInfo := new(datastruct.UserDepositInfo)
-	resp.Count, _ = engine.Count(userDepositInfo)
-	resp.Amount, _ = engine.Sum(userDepositInfo, "money")
-
-	today_unix, tomorrow_unix := tools.GetTodayTomorrowTime()
-	resp.TodayCount, _ = engine.Where("created_at >= ? and created_at < ?", today_unix, tomorrow_unix).Count(userDepositInfo)
-	resp.TodayAmount, _ = engine.Where("created_at >= ? and created_at < ?", today_unix, tomorrow_unix).Sum(userDepositInfo, "money")
-
-	balanceInfo := new(datastruct.BalanceInfo)
-	resp.EarnMoney, _ = engine.Sum(balanceInfo, "earn_balance")
-	resp.EarnGold, _ = engine.Sum(balanceInfo, "earn_gold")
-
-	args := make([]interface{}, 0)
-	query := "1=1"
-	if body.Platform != 2 {
-		query += " and user_deposit_info.platform = ?"
-		args = append(args, body.Platform)
-	}
-	if body.Name != "" {
-		query += " and user_info.nick_name like ?"
-		args = append(args, "%"+body.Name+"%")
-	}
-	if body.EndTime > 0 && body.StartTime > 0 && body.EndTime > body.StartTime {
-		query += " and user_deposit_info.created_at >= " + tools.Int64ToString(body.StartTime) + " and user_deposit_info.created_at < " + tools.Int64ToString(body.EndTime)
-	}
-
-	start := (body.PageIndex - 1) * body.PageSize
-	limit := body.PageSize
-	depositInfo := make([]*webDepositInfo, 0)
-	resp.CurrentTotal, _ = engine.Table("user_deposit_info").Join("INNER", "user_info", "user_info.id = user_deposit_info.user_id").Where(query, args...).Desc("user_deposit_info.id").Count(balanceInfo)
-
-	engine.Table("user_deposit_info").Join("INNER", "user_info", "user_info.id = user_deposit_info.user_id").Where(query, args...).Desc("user_deposit_info.id").Limit(limit, start).Find(&depositInfo)
-
-	depositUsers := make([]*datastruct.WebDepositUser, 0)
-	for _, v := range depositInfo {
-		depositUser := new(datastruct.WebDepositUser)
-		depositUser.CreateTime = v.UserDepositInfo.CreatedAt
-		depositUser.Pay = int64(v.UserDepositInfo.Money)
-		depositUser.Platform = int(v.UserDepositInfo.Platform)
-		depositUser.NickName = v.UserInfo.NickName
-		depositUser.Avatar = v.UserInfo.Avatar
-		depositUser.Agency = queryAgencyEarn(v.UserDepositInfo.UserId, v.UserDepositInfo.Id, engine)
-		depositUsers = append(depositUsers, depositUser)
-	}
-	resp.Users = depositUsers
-	return resp, datastruct.NULLError
-}
-
 func queryAgencyEarn(fromUserId int, depositId int, engine *xorm.Engine) []*datastruct.WebDepositAgency {
 	agencys := make([]*datastruct.WebDepositAgency, 0, datastruct.MaxLevel)
 	for i := 0; i < datastruct.MaxLevel; i++ {
@@ -2261,30 +2210,6 @@ func (handle *DBHandler) GetActiveUsers(body *datastruct.WebActiveUserBody) (int
 	statistics.ActiveUsers = tools.StringToInt64(strTotal)
 
 	return statistics, datastruct.NULLError
-}
-
-func (handle *DBHandler) GetCommissionStatistics(body *datastruct.WebActiveUserBody) (interface{}, datastruct.CodeType) {
-	/*
-		engine := handle.mysqlEngine
-		queryRegisterUser := ""
-		if body.RPlatform <= datastruct.H5 {
-			queryRegisterUser = " and platform = " + tools.IntToString(int(body.RPlatform))
-		}
-		statistics := new(datastruct.WebResponseActiveUsers)
-		statistics.Date = tools.UnixToString(body.StartTime, "2006-01-02")
-
-		newUserSql := "select count(*) from user_info where created_at >= ? and created_at < ?" + queryRegisterUser
-		results, _ := engine.Query(newUserSql, body.StartTime, body.EndTime)
-		strTotal := string(results[0]["count(*)"][:])
-		statistics.NewUsers = tools.StringToInt64(strTotal)
-
-		activeUserSql := "select count(*) from user_info where login_time >= ? and login_time < ?" + queryRegisterUser
-		results, _ = engine.Query(activeUserSql, body.StartTime, body.EndTime)
-		strTotal = string(results[0]["count(*)"][:])
-		statistics.ActiveUsers = tools.StringToInt64(strTotal)
-		return statistics, datastruct.NULLError
-	*/
-	return nil, datastruct.NULLError
 }
 
 func getAgencyUserCount(engine *xorm.Engine, users []int, isEnd bool, body *datastruct.WebNewsUserBody) ([]int, int, int) {
@@ -3434,6 +3359,85 @@ func (handle *DBHandler) UpdateWebUserPwd(body *datastruct.WebUserPwdBody, token
 		return datastruct.UpdateDataFailed
 	}
 	return datastruct.NULLError
+}
+
+func (handle *DBHandler) GetAllDepositInfo(body *datastruct.WebQueryDepositInfoBody) (interface{}, datastruct.CodeType) {
+	engine := handle.mysqlEngine
+	resp := new(datastruct.WebResponseDepositInfo)
+	userDepositInfo := new(datastruct.UserDepositInfo)
+	resp.Count, _ = engine.Count(userDepositInfo)
+	resp.Amount, _ = engine.Sum(userDepositInfo, "money")
+
+	today_unix, tomorrow_unix := tools.GetTodayTomorrowTime()
+	resp.TodayCount, _ = engine.Where("created_at >= ? and created_at < ?", today_unix, tomorrow_unix).Count(userDepositInfo)
+	resp.TodayAmount, _ = engine.Where("created_at >= ? and created_at < ?", today_unix, tomorrow_unix).Sum(userDepositInfo, "money")
+
+	balanceInfo := new(datastruct.BalanceInfo)
+	resp.EarnMoney, _ = engine.Sum(balanceInfo, "earn_balance")
+	resp.EarnGold, _ = engine.Sum(balanceInfo, "earn_gold")
+
+	args := make([]interface{}, 0)
+	query := "1=1"
+	if body.Platform != 2 {
+		query += " and user_deposit_info.platform = ?"
+		args = append(args, body.Platform)
+	}
+	if body.Name != "" {
+		query += " and user_info.nick_name like ?"
+		args = append(args, "%"+body.Name+"%")
+	}
+	if body.EndTime > 0 && body.StartTime > 0 && body.EndTime > body.StartTime {
+		query += " and user_deposit_info.created_at >= " + tools.Int64ToString(body.StartTime) + " and user_deposit_info.created_at < " + tools.Int64ToString(body.EndTime)
+	}
+
+	start := (body.PageIndex - 1) * body.PageSize
+	limit := body.PageSize
+	depositInfo := make([]*webDepositInfo, 0)
+	resp.CurrentTotal, _ = engine.Table("user_deposit_info").Join("INNER", "user_info", "user_info.id = user_deposit_info.user_id").Where(query, args...).Desc("user_deposit_info.id").Count(balanceInfo)
+
+	engine.Table("user_deposit_info").Join("INNER", "user_info", "user_info.id = user_deposit_info.user_id").Where(query, args...).Desc("user_deposit_info.id").Limit(limit, start).Find(&depositInfo)
+
+	depositUsers := make([]*datastruct.WebDepositUser, 0)
+	for _, v := range depositInfo {
+		depositUser := new(datastruct.WebDepositUser)
+		depositUser.CreateTime = v.UserDepositInfo.CreatedAt
+		depositUser.Pay = int64(v.UserDepositInfo.Money)
+		depositUser.Platform = int(v.UserDepositInfo.Platform)
+		depositUser.NickName = v.UserInfo.NickName
+		depositUser.Avatar = v.UserInfo.Avatar
+		depositUser.Agency = queryAgencyEarn(v.UserDepositInfo.UserId, v.UserDepositInfo.Id, engine)
+		depositUsers = append(depositUsers, depositUser)
+	}
+	resp.Users = depositUsers
+	return resp, datastruct.NULLError
+}
+
+func (handle *DBHandler) GetCommissionStatistics(body *datastruct.WebCommissionStatisticsBody) (interface{}, datastruct.CodeType) {
+
+	engine := handle.mysqlEngine
+	statistics := new(datastruct.WebResponseCommissionStatistics)
+	statistics.Date = tools.UnixToString(body.StartTime, "2006-01-02")
+
+	newUserSql := "select sum(money) as total from user_deposit_info udi where udi.created_at >= ? and udi.created_at < ?"
+	results, _ := engine.Query(newUserSql, body.StartTime, body.EndTime)
+	strTotal := string(results[0]["total"][:])
+	statistics.DepositTotal = tools.StringToFloat64(strTotal)
+
+	newUserSql = "select sum(earn_balance) as total from balance_info b where b.created_at >= ? and b.created_at < ?"
+	results, _ = engine.Query(newUserSql, body.StartTime, body.EndTime)
+	strTotal = string(results[0]["total"][:])
+	statistics.BalanceTotal = tools.StringToFloat64(strTotal)
+
+	newUserSql = "select sum(charge+poundage) as total from draw_cash_info d where d.created_at >= ? and d.created_at < ? and d.state <= 1"
+	results, _ = engine.Query(newUserSql, body.StartTime, body.EndTime)
+	strTotal = string(results[0]["total"][:])
+	statistics.DrawTotal = tools.StringToFloat64(strTotal)
+
+	statistics.Profit = statistics.DepositTotal - statistics.BalanceTotal
+	statistics.RemainingDrawTotal = statistics.BalanceTotal - statistics.DrawTotal
+
+	return statistics, datastruct.NULLError
+
 }
 
 // var valuesSlice = make([]interface{}, len(cols))
