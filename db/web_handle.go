@@ -3203,37 +3203,29 @@ func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody,
 	isUpdate := false
 	if body.Id > 0 {
 		isUpdate = true
-	}
-	sql := "select token from web_user where login_name = ?"
-	results, err := engine.Query(sql, body.LoginName)
-	if err != nil {
-		log.Debug("EditWebUser Query sql err:%v", err.Error())
-		return datastruct.UpdateDataFailed
-	}
-	count := len(results)
-	if count > 0 {
-		if isUpdate {
-			query_token := string(results[0]["token"][:])
-			if count >= 2 || query_token != token {
-				log.Debug("------------11111111111")
-				return datastruct.LoginNameAlreadyExisted
-			}
-		} else {
+	} else {
+		sql := "select count(*) from web_user where login_name = ?"
+		results, err := engine.Query(sql, body.LoginName)
+		if err != nil {
+			log.Debug("EditWebUser Query sql err:%v", err.Error())
+			return datastruct.UpdateDataFailed
+		}
+		count_str := string(results[0]["count(*)"][:])
+		if tools.StringToInt(count_str) > 0 {
 			return datastruct.LoginNameAlreadyExisted
 		}
 	}
-
 	session := engine.NewSession()
 	defer session.Close()
 	session.Begin()
-
+	var err error
 	now_time := time.Now().Unix()
 	web_user := new(datastruct.WebUser)
-	web_user.LoginName = body.LoginName
 	web_user.Name = body.Name
 	web_user.UpdatedAt = now_time
 	var user_id int
 	if !isUpdate {
+		web_user.LoginName = body.LoginName
 		web_user.Pwd = body.Pwd
 		web_user.CreatedAt = now_time
 		web_user.RoleId = datastruct.NormalLevelID
@@ -3248,9 +3240,9 @@ func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody,
 			web_user.Pwd = body.Pwd
 		}
 		if isUpdatePwd {
-			_, err = session.Where("id=?", user_id).Cols("name", "login_name", "pwd", "updated_at").Update(web_user)
+			_, err = session.Where("id=?", user_id).Cols("name", "pwd", "updated_at").Update(web_user)
 		} else {
-			_, err = session.Where("id=?", user_id).Cols("name", "login_name", "updated_at").Update(web_user)
+			_, err = session.Where("id=?", user_id).Cols("name", "updated_at").Update(web_user)
 		}
 	}
 	if err != nil {
