@@ -2263,6 +2263,30 @@ func (handle *DBHandler) GetActiveUsers(body *datastruct.WebActiveUserBody) (int
 	return statistics, datastruct.NULLError
 }
 
+func (handle *DBHandler) GetCommissionStatistics(body *datastruct.WebActiveUserBody) (interface{}, datastruct.CodeType) {
+	/*
+		engine := handle.mysqlEngine
+		queryRegisterUser := ""
+		if body.RPlatform <= datastruct.H5 {
+			queryRegisterUser = " and platform = " + tools.IntToString(int(body.RPlatform))
+		}
+		statistics := new(datastruct.WebResponseActiveUsers)
+		statistics.Date = tools.UnixToString(body.StartTime, "2006-01-02")
+
+		newUserSql := "select count(*) from user_info where created_at >= ? and created_at < ?" + queryRegisterUser
+		results, _ := engine.Query(newUserSql, body.StartTime, body.EndTime)
+		strTotal := string(results[0]["count(*)"][:])
+		statistics.NewUsers = tools.StringToInt64(strTotal)
+
+		activeUserSql := "select count(*) from user_info where login_time >= ? and login_time < ?" + queryRegisterUser
+		results, _ = engine.Query(activeUserSql, body.StartTime, body.EndTime)
+		strTotal = string(results[0]["count(*)"][:])
+		statistics.ActiveUsers = tools.StringToInt64(strTotal)
+		return statistics, datastruct.NULLError
+	*/
+	return nil, datastruct.NULLError
+}
+
 func getAgencyUserCount(engine *xorm.Engine, users []int, isEnd bool, body *datastruct.WebNewsUserBody) ([]int, int, int) {
 	if users == nil || len(users) <= 0 {
 		return nil, 0, 0
@@ -3198,7 +3222,7 @@ func (handle *DBHandler) EditGoldCoinGift(body *datastruct.WebResponseGoldCoinGi
 	return datastruct.NULLError
 }
 
-func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody) datastruct.CodeType {
+func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody, token string) (interface{}, datastruct.CodeType) {
 	engine := handle.mysqlEngine
 	isUpdate := false
 	if body.Id > 0 {
@@ -3206,19 +3230,20 @@ func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody)
 	}
 	sql := "select id from web_user where login_name = ?"
 	results, err := engine.Query(sql, body.LoginName)
+	isUpdateMine := 0 //是否修改自己的数据
 	if err != nil {
 		log.Debug("EditWebUser Query sql err:%v", err.Error())
-		return datastruct.UpdateDataFailed
+		return isUpdateMine, datastruct.UpdateDataFailed
 	}
 	count := len(results)
 	if count > 0 {
 		if isUpdate {
 			query_id := string(results[0]["id"][:])
 			if count >= 2 || tools.StringToInt(query_id) != body.Id {
-				return datastruct.LoginNameAlreadyExisted
+				return isUpdateMine, datastruct.LoginNameAlreadyExisted
 			}
 		} else {
-			return datastruct.LoginNameAlreadyExisted
+			return isUpdateMine, datastruct.LoginNameAlreadyExisted
 		}
 	}
 
@@ -3255,14 +3280,14 @@ func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody)
 	if err != nil {
 		str := fmt.Sprintf("EditPermissionUser err0:%s", err.Error())
 		rollbackError(str, session)
-		return datastruct.UpdateDataFailed
+		return isUpdateMine, datastruct.UpdateDataFailed
 	}
 	permission := new(datastruct.WebPermission)
 	_, err = session.Where("user_id=?", user_id).Delete(permission)
 	if err != nil {
 		str := fmt.Sprintf("EditPermissionUser err1:%s", err.Error())
 		rollbackError(str, session)
-		return datastruct.UpdateDataFailed
+		return isUpdateMine, datastruct.UpdateDataFailed
 	}
 	for _, v := range body.PermissionIds {
 		permission := new(datastruct.WebPermission)
@@ -3272,7 +3297,7 @@ func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody)
 		if err != nil {
 			str := fmt.Sprintf("EditPermissionUser err2:%s", err.Error())
 			rollbackError(str, session)
-			return datastruct.UpdateDataFailed
+			return isUpdateMine, datastruct.UpdateDataFailed
 		}
 	}
 
@@ -3280,9 +3305,15 @@ func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody)
 	if err != nil {
 		str := fmt.Sprintf("DBHandler->EditPermissionUser Commit :%s", err.Error())
 		rollbackError(str, session)
-		return datastruct.UpdateDataFailed
+		return isUpdateMine, datastruct.UpdateDataFailed
 	}
-	return datastruct.NULLError
+
+	webUser := new(datastruct.WebUser)
+	engine.Where("token=?", token).Get(webUser)
+	if webUser.Id == body.Id {
+		isUpdateMine = 1
+	}
+	return isUpdateMine, datastruct.NULLError
 }
 
 func (handle *DBHandler) DeleteWebUser(webUserId int) datastruct.CodeType {

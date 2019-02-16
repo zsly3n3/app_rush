@@ -388,6 +388,36 @@ func (handle *EventHandler) GetActiveUsers(c *gin.Context) (interface{}, datastr
 	return rs, datastruct.NULLError
 }
 
+func (handle *EventHandler) GetCommissionStatistics(c *gin.Context) (interface{}, datastruct.CodeType) {
+	var body datastruct.WebActiveUserBody
+	err := c.BindJSON(&body)
+	if err != nil || body.StartTime < 0 || body.EndTime < 0 || body.StartTime >= body.EndTime {
+		return nil, datastruct.ParamError
+	}
+	if body.EndTime-body.StartTime > 3600*24*31*2 {
+		return nil, datastruct.DateTooLong
+	}
+	var day_sec int64
+	day_sec = 3600 * 24
+	list := make([]interface{}, 0)
+	startTime := body.StartTime
+	for {
+		new_body := new(datastruct.WebActiveUserBody)
+		new_body.StartTime = startTime
+		new_body.EndTime = startTime + day_sec
+		new_body.RPlatform = body.RPlatform
+		rs, _ := handle.dbHandler.GetCommissionStatistics(new_body)
+		list = append(list, rs)
+		if new_body.EndTime >= body.EndTime {
+			break
+		}
+		startTime = new_body.EndTime
+	}
+	var rs interface{}
+	rs = list
+	return rs, datastruct.NULLError
+}
+
 func (handle *EventHandler) EditReClass(c *gin.Context) datastruct.CodeType {
 	var body datastruct.WebEditReClassBody
 	err := c.BindJSON(&body)

@@ -641,6 +641,12 @@ type WebResponseActiveUsers struct {
 	Date        string `json:"date"`        //日期
 }
 
+type WebResponseCommissionStatistics struct {
+	NewUsers    int64  `json:"newusers"`    //
+	ActiveUsers int64  `json:"activeusers"` //活跃用户数
+	Date        string `json:"date"`        //日期
+}
+
 type WebResponseGoodsClass struct {
 	Id       int    `json:"classid"`   //自增id
 	Name     string `json:"classname"` //商品类型名称

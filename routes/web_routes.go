@@ -1428,6 +1428,27 @@ func updateWebUserPwd(r *gin.Engine, eventHandler *event.EventHandler) {
 	})
 }
 
+func getCommissionStatistics(r *gin.Engine, eventHandler *event.EventHandler) {
+	url := "/web/commissionstatistics"
+	r.POST(url, func(c *gin.Context) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
+			return
+		}
+		data, code := eventHandler.GetCommissionStatistics(c)
+		if code == datastruct.NULLError {
+			c.JSON(200, gin.H{
+				"code": code,
+				"data": data,
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"code": code,
+			})
+		}
+	})
+}
+
 func WebRegister(r *gin.Engine, eventHandler *event.EventHandler) {
 	editDomain(r, eventHandler)                  //添加或修改域名
 	updateSendInfo(r, eventHandler)              //商品已发货
@@ -1501,4 +1522,5 @@ func WebRegister(r *gin.Engine, eventHandler *event.EventHandler) {
 	editWebUser(r, eventHandler)                 //添加或修改web用户
 	getAllMenuInfo(r, eventHandler)              //获取所有菜单信息
 	updateWebUserPwd(r, eventHandler)            //修改web用户密码,不需要权限检测
+	getCommissionStatistics(r, eventHandler)
 }
