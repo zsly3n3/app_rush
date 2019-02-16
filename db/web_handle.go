@@ -3266,12 +3266,11 @@ func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody,
 	} else {
 		user_id = body.Id
 		isUpdatePwd := false
-		if web_user.Pwd != "" {
+		if body.Pwd != "" {
 			isUpdatePwd = true
 			web_user.Pwd = body.Pwd
 		}
 		if isUpdatePwd {
-			log.Debug("---------------------isUpdatePwd")
 			_, err = session.Where("id=?", user_id).Cols("name", "login_name", "pwd", "updated_at").Update(web_user)
 		} else {
 			_, err = session.Where("id=?", user_id).Cols("name", "login_name", "updated_at").Update(web_user)
