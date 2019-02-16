@@ -3246,7 +3246,6 @@ func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody,
 			return isUpdateMine, datastruct.LoginNameAlreadyExisted
 		}
 	}
-
 	session := engine.NewSession()
 	defer session.Close()
 	session.Begin()
@@ -3272,6 +3271,7 @@ func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody,
 			web_user.Pwd = body.Pwd
 		}
 		if isUpdatePwd {
+			log.Debug("---------------------isUpdatePwd")
 			_, err = session.Where("id=?", user_id).Cols("name", "login_name", "pwd", "updated_at").Update(web_user)
 		} else {
 			_, err = session.Where("id=?", user_id).Cols("name", "login_name", "updated_at").Update(web_user)
