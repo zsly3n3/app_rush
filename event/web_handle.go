@@ -633,13 +633,13 @@ func (handle *EventHandler) DeleteWebUser(c *gin.Context) datastruct.CodeType {
 	return handle.dbHandler.DeleteWebUser(body.Id)
 }
 
-func (handle *EventHandler) EditWebUser(c *gin.Context, token string) datastruct.CodeType {
+func (handle *EventHandler) EditWebUser(c *gin.Context) datastruct.CodeType {
 	var body datastruct.WebEditPermissionUserBody
 	err := c.BindJSON(&body)
 	if err != nil || body.Id == datastruct.AdminLevelID || body.Id < 0 || body.LoginName == "" || body.Name == "" || len(body.PermissionIds) <= 0 || (body.Pwd == "" && body.Id == 0) {
 		return datastruct.ParamError
 	}
-	return handle.dbHandler.EditWebUser(&body, token)
+	return handle.dbHandler.EditWebUser(&body)
 }
 
 func (handle *EventHandler) GetAllMenuInfo() (interface{}, datastruct.CodeType) {

@@ -3198,34 +3198,41 @@ func (handle *DBHandler) EditGoldCoinGift(body *datastruct.WebResponseGoldCoinGi
 	return datastruct.NULLError
 }
 
-func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody, token string) datastruct.CodeType {
+func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody) datastruct.CodeType {
 	engine := handle.mysqlEngine
 	isUpdate := false
 	if body.Id > 0 {
 		isUpdate = true
-	} else {
-		sql := "select count(*) from web_user where login_name = ?"
-		results, err := engine.Query(sql, body.LoginName)
-		if err != nil {
-			log.Debug("EditWebUser Query sql err:%v", err.Error())
-			return datastruct.UpdateDataFailed
-		}
-		count_str := string(results[0]["count(*)"][:])
-		if tools.StringToInt(count_str) > 0 {
+	}
+	sql := "select id from web_user where login_name = ?"
+	results, err := engine.Query(sql, body.LoginName)
+	if err != nil {
+		log.Debug("EditWebUser Query sql err:%v", err.Error())
+		return datastruct.UpdateDataFailed
+	}
+	count := len(results)
+	if count > 0 {
+		if isUpdate {
+			query_id := string(results[0]["id"][:])
+			if count >= 2 || tools.StringToInt(query_id) != body.Id {
+				return datastruct.LoginNameAlreadyExisted
+			}
+		} else {
 			return datastruct.LoginNameAlreadyExisted
 		}
 	}
+
 	session := engine.NewSession()
 	defer session.Close()
 	session.Begin()
-	var err error
+
 	now_time := time.Now().Unix()
 	web_user := new(datastruct.WebUser)
+	web_user.LoginName = body.LoginName
 	web_user.Name = body.Name
 	web_user.UpdatedAt = now_time
 	var user_id int
 	if !isUpdate {
-		web_user.LoginName = body.LoginName
 		web_user.Pwd = body.Pwd
 		web_user.CreatedAt = now_time
 		web_user.RoleId = datastruct.NormalLevelID
@@ -3240,9 +3247,9 @@ func (handle *DBHandler) EditWebUser(body *datastruct.WebEditPermissionUserBody,
 			web_user.Pwd = body.Pwd
 		}
 		if isUpdatePwd {
-			_, err = session.Where("id=?", user_id).Cols("name", "pwd", "updated_at").Update(web_user)
+			_, err = session.Where("id=?", user_id).Cols("name", "login_name", "pwd", "updated_at").Update(web_user)
 		} else {
-			_, err = session.Where("id=?", user_id).Cols("name", "updated_at").Update(web_user)
+			_, err = session.Where("id=?", user_id).Cols("name", "login_name", "updated_at").Update(web_user)
 		}
 	}
 	if err != nil {
