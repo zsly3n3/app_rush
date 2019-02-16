@@ -661,7 +661,7 @@ func (handle *EventHandler) UpdateWebUserPwd(c *gin.Context) datastruct.CodeType
 	}
 	var body datastruct.WebUserPwdBody
 	err := c.BindJSON(&body)
-	if err != nil || body.NewPwd == "" || body.OldPwd == "" || rs_token == "" {
+	if err != nil || body.NewPwd == "" || body.OldPwd == "" || rs_token == "" || body.NewPwd == body.OldPwd {
 		return datastruct.ParamError
 	}
 	return handle.dbHandler.UpdateWebUserPwd(&body, rs_token)
