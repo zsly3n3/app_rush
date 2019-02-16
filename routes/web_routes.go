@@ -1369,13 +1369,21 @@ func deleteWebUser(r *gin.Engine, eventHandler *event.EventHandler) {
 func editWebUser(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/editwebuser"
 	r.POST(url, func(c *gin.Context) {
-		_, tf := checkPermission(c, url, eventHandler)
+		token, tf := checkPermission(c, url, eventHandler)
 		if !tf {
 			return
 		}
-		c.JSON(200, gin.H{
-			"code": eventHandler.EditWebUser(c),
-		})
+		data, code := eventHandler.EditWebUser(c, token)
+		if code == datastruct.NULLError {
+			c.JSON(200, gin.H{
+				"code": code,
+				"data": data,
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"code": code,
+			})
+		}
 	})
 }
 
