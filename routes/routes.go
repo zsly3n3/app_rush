@@ -130,7 +130,6 @@ func checkToken(c *gin.Context, eventHandler *event.EventHandler) (int, string, 
 			userId, tf, isBlackList = eventHandler.IsExistUser(token)
 			if tf && isBlackList {
 				url := eventHandler.GetBlackListRedirect()
-
 				c.JSON(200, gin.H{
 					"code": datastruct.AppRedirect,
 					"data": url,
