@@ -650,11 +650,19 @@ func (handle *EventHandler) CheckPermission(token string, method string, url str
 	return handle.dbHandler.CheckPermission(token, method, url)
 }
 
-func (handle *EventHandler) UpdateWebUserPwd(c *gin.Context, token string) datastruct.CodeType {
+func (handle *EventHandler) UpdateWebUserPwd(c *gin.Context) datastruct.CodeType {
+	tokens, isExist := c.Request.Header["Webtoken"]
+	rs_token := ""
+	if isExist {
+		token := tokens[0]
+		if token != "" {
+			rs_token = token
+		}
+	}
 	var body datastruct.WebUserPwdBody
 	err := c.BindJSON(&body)
-	if err != nil || body.NewPwd == "" || body.OldPwd == "" {
+	if err != nil || body.NewPwd == "" || body.OldPwd == "" || rs_token == "" {
 		return datastruct.ParamError
 	}
-	return handle.dbHandler.UpdateWebUserPwd(&body, token)
+	return handle.dbHandler.UpdateWebUserPwd(&body, rs_token)
 }
