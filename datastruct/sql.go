@@ -549,7 +549,8 @@ type WebSecondaryMenuApi struct {
 }
 
 type UserGetHomeGoodsDataTime struct {
-	UserId      int   `xorm:"not null pk INT(11)"` //用户id
-	ClassId     int   `xorm:"not null INT(11)"`    //商品类型id
-	GetDataTime int64 `xorm:"bigint not null"`     //获取数据的时间
+	Id          int   `xorm:"not null pk autoincr INT(11)"` //自增id
+	UserId      int   `xorm:"not null INT(11)"`             //用户id
+	ClassId     int   `xorm:"not null INT(11)"`             //商品类型id
+	GetDataTime int64 `xorm:"bigint not null"`              //获取数据的时间
 }

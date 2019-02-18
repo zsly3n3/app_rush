@@ -250,10 +250,14 @@ func getGoods(r *gin.Engine, eventHandler *event.EventHandler) {
 
 func getGoodsClass(r *gin.Engine, eventHandler *event.EventHandler) {
 	r.GET("/app/goodsclass", func(c *gin.Context) {
-		// if !checkVersion(c, eventHandler) {
-		// 	return
-		// }
-		data, code := eventHandler.GetGoodsClass()
+		if !checkVersion(c, eventHandler) {
+			return
+		}
+		userId, _, tf := checkToken(c, eventHandler)
+		if !tf {
+			return
+		}
+		data, code := eventHandler.GetGoodsClass(userId)
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
 				"code": code,
@@ -1379,6 +1383,29 @@ func appGetDefaultAgency(r *gin.Engine, eventHandler *event.EventHandler) {
 	})
 }
 
+func IsRefreshHomeGoodsData(r *gin.Engine, eventHandler *event.EventHandler) {
+	// r.GET("/app/isrefreshgoods/:classid", func(c *gin.Context) {
+	// 	if !checkVersion(c, eventHandler) {
+	// 		return
+	// 	}
+	// 	userId, _, tf := checkToken(c, eventHandler)
+	// 	if !tf {
+	// 		return
+	// 	}
+	// 	data, code := eventHandler.IsRefreshHomeGoodsData(userId)
+	// 	if code == datastruct.NULLError {
+	// 		c.JSON(200, gin.H{
+	// 			"code": code,
+	// 			"data": data,
+	// 		})
+	// 	} else {
+	// 		c.JSON(200, gin.H{
+	// 			"code": code,
+	// 		})
+	// 	}
+	// })
+}
+
 func Register(r *gin.Engine, eventHandler *event.EventHandler) {
 	getAuthAddr(r, eventHandler)
 	getKfInfo(r, eventHandler)
@@ -1440,4 +1467,5 @@ func Register(r *gin.Engine, eventHandler *event.EventHandler) {
 	getDownLoadAppGift(r, eventHandler)
 	getRegisterGift(r, eventHandler)
 	appGetDefaultAgency(r, eventHandler)
+	IsRefreshHomeGoodsData(r, eventHandler)
 }

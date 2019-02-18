@@ -134,8 +134,8 @@ func (handle *EventHandler) GetGoods(pageIndex int, pageSize int, classid int) [
 	return handle.dbHandler.GetGoods(pageIndex, pageSize, classid)
 }
 
-func (handle *EventHandler) GetGoodsClass() (interface{}, datastruct.CodeType) {
-	return handle.dbHandler.GetGoodsClass()
+func (handle *EventHandler) GetGoodsClass(userId int) (interface{}, datastruct.CodeType) {
+	return handle.dbHandler.GetGoodsClass(userId)
 }
 
 func (handle *EventHandler) WorldRewardInfo(pageIndex int, pageSize int) (interface{}, datastruct.CodeType) {

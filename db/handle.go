@@ -141,7 +141,7 @@ type goodsData struct {
 	datastruct.RecommendedClass `xorm:"extends"`
 }
 
-func (handle *DBHandler) GetGoods(pageIndex int, pageSize int, classid int) []*datastruct.ResponseGoodsData {
+func (handle *DBHandler) GetGoods(pageIndex int, pageSize int, classid int, user_id int) []*datastruct.ResponseGoodsData {
 	engine := handle.mysqlEngine
 	goods := make([]*goodsData, 0)
 	start := (pageIndex - 1) * pageSize
@@ -168,10 +168,26 @@ func (handle *DBHandler) GetGoods(pageIndex int, pageSize int, classid int) []*d
 		resp_good.SendedOut = v.Goods.SendedOut
 		resp_goods = append(resp_goods, resp_good)
 	}
+	uggt := new(datastruct.UserGetHomeGoodsDataTime)
+	has, err := engine.Where("user_id=? and class_id=? ", user_id, classid).Get(uggt)
+	if err == nil {
+		now_time := time.Now().Unix()
+		if has {
+			update_uggt := new(datastruct.UserGetHomeGoodsDataTime)
+			update_uggt.GetDataTime = now_time
+			engine.Where("id=?", uggt.Id).Cols("get_data_time").Update(update_uggt)
+		} else {
+			new_uggt := new(datastruct.UserGetHomeGoodsDataTime)
+			new_uggt.ClassId = classid
+			new_uggt.UserId = user_id
+			new_uggt.GetDataTime = now_time
+			engine.Insert(new_uggt)
+		}
+	}
 	return resp_goods
 }
 
-func (handle *DBHandler) GetGoodsClass() (interface{}, datastruct.CodeType) {
+func (handle *DBHandler) GetGoodsClass(userId int) (interface{}, datastruct.CodeType) {
 	engine := handle.mysqlEngine
 	classinfo := make([]*datastruct.GoodsClass, 0)
 	err := engine.Where("is_hidden=?", 0).Desc("sort_id").Asc("id").Find(&classinfo)
@@ -179,13 +195,17 @@ func (handle *DBHandler) GetGoodsClass() (interface{}, datastruct.CodeType) {
 		return nil, datastruct.GetDataFailed
 	}
 	resp := make([]*datastruct.ResponseGoodsClass, 0)
+	classids := make([]interface{}, 0, len(classinfo))
 	for _, v := range classinfo {
 		gclass := new(datastruct.ResponseGoodsClass)
 		gclass.ImgUrl = tools.CreateGoodsImgUrl(v.Icon)
 		gclass.Id = v.Id
 		gclass.Name = v.Name
 		resp = append(resp, gclass)
+		classids = append(classids, v.Id)
 	}
+	uggdt := new(datastruct.UserGetHomeGoodsDataTime)
+	engine.Where("user_id=?", userId).NotIn("class_id", classids...).Delete(uggdt)
 	return resp, datastruct.NULLError
 }
 
