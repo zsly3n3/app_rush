@@ -2890,5 +2890,12 @@ func (handle *DBHandler) TruncateTmpDataForGoods() {
 	}
 }
 
+func (handle *DBHandler) IsRefreshHomeGoodsData(userId int, classId int) (interface{}, datastruct.CodeType) {
+
+	// sql := "select * from user_get_home_goods_data_time where "
+
+	return nil, datastruct.NULLError
+}
+
 // var valuesSlice = make([]interface{}, len(cols))
 // has, err := engine.Where("id = ?", id).Cols(cols...).Get(&valuesSlice)

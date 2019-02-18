@@ -74,7 +74,6 @@ func (handle *EventHandler) GetSendGoodsOrder(body *datastruct.GetSendGoodsBody)
 func (handle *EventHandler) GetDefaultAgency() (interface{}, datastruct.CodeType) {
 	return handle.dbHandler.GetDefaultAgency()
 }
-
 func (handle *EventHandler) UpdateDefaultAgency(c *gin.Context) {
 	var body datastruct.DefaultAgencyBody
 	err := c.BindJSON(&body)

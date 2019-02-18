@@ -130,8 +130,8 @@ func (handle *EventHandler) GetHomeData(platform int) *datastruct.ResponseHomeDa
 	return handle.dbHandler.GetHomeData(platform)
 }
 
-func (handle *EventHandler) GetGoods(pageIndex int, pageSize int, classid int) []*datastruct.ResponseGoodsData {
-	return handle.dbHandler.GetGoods(pageIndex, pageSize, classid)
+func (handle *EventHandler) GetGoods(pageIndex int, pageSize int, classid int, user_id int) []*datastruct.ResponseGoodsData {
+	return handle.dbHandler.GetGoods(pageIndex, pageSize, classid, user_id)
 }
 
 func (handle *EventHandler) GetGoodsClass(userId int) (interface{}, datastruct.CodeType) {
@@ -717,6 +717,10 @@ func (handle *EventHandler) GetDownLoadAppGift(userId int) datastruct.CodeType {
 
 func (handle *EventHandler) GetRegisterGift(userId int) datastruct.CodeType {
 	return handle.dbHandler.GetRegisterGift(userId)
+}
+
+func (handle *EventHandler) IsRefreshHomeGoodsData(userId int, classId int) (interface{}, datastruct.CodeType) {
+	return handle.dbHandler.IsRefreshHomeGoodsData(userId, classId)
 }
 
 // func (handle *EventHandler) UserActivate(userId int) datastruct.CodeType {
