@@ -40,4 +40,5 @@ func (data *CommonData) UpdateTmpData() {
 	for _, v := range goods_ids {
 		dbHanle.UpdateTmpData(v, now_time)
 	}
+	dbHanle.UpdateGoodsClassTime()
 }

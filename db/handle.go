@@ -2891,10 +2891,33 @@ func (handle *DBHandler) TruncateTmpDataForGoods() {
 }
 
 func (handle *DBHandler) IsRefreshHomeGoodsData(userId int, classId int) (interface{}, datastruct.CodeType) {
+	isRefresh := 0
+	engine := handle.mysqlEngine
+	uggt := new(datastruct.UserGetHomeGoodsDataTime)
+	has, err := engine.Where("user_id=? and class_id=?", userId, classId).Get(uggt)
+	if err != nil {
+		return nil, datastruct.GetDataFailed
+	}
+	if has {
+		sql := "select update_at from goods_class where id = ?"
+		results, err := engine.Query(sql, classId)
+		if err != nil {
+			return nil, datastruct.GetDataFailed
+		}
+		update_at := tools.StringToInt64(string(results[0]["update_at"][:]))
+		if update_at > uggt.GetDataTime {
+			isRefresh = 1
+		}
+	} else {
+		isRefresh = 1
+	}
+	return isRefresh, datastruct.NULLError
+}
 
-	// sql := "select * from user_get_home_goods_data_time where "
-
-	return nil, datastruct.NULLError
+func (handle *DBHandler) UpdateGoodsClassTime() {
+	engine := handle.mysqlEngine
+	sql := "update goods_class set update_at = ? where id > 0"
+	engine.Exec(sql, time.Now().Unix())
 }
 
 // var valuesSlice = make([]interface{}, len(cols))
