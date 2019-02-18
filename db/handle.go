@@ -168,20 +168,22 @@ func (handle *DBHandler) GetGoods(pageIndex int, pageSize int, classid int, user
 		resp_good.SendedOut = v.Goods.SendedOut
 		resp_goods = append(resp_goods, resp_good)
 	}
-	uggt := new(datastruct.UserGetHomeGoodsDataTime)
-	has, err := engine.Where("user_id=? and class_id=? ", user_id, classid).Get(uggt)
-	if err == nil {
-		now_time := time.Now().Unix()
-		if has {
-			update_uggt := new(datastruct.UserGetHomeGoodsDataTime)
-			update_uggt.GetDataTime = now_time
-			engine.Where("id=?", uggt.Id).Cols("get_data_time").Update(update_uggt)
-		} else {
-			new_uggt := new(datastruct.UserGetHomeGoodsDataTime)
-			new_uggt.ClassId = classid
-			new_uggt.UserId = user_id
-			new_uggt.GetDataTime = now_time
-			engine.Insert(new_uggt)
+	if pageIndex == 1 {
+		uggt := new(datastruct.UserGetHomeGoodsDataTime)
+		has, err := engine.Where("user_id=? and class_id=? ", user_id, classid).Get(uggt)
+		if err == nil {
+			now_time := time.Now().Unix()
+			if has {
+				update_uggt := new(datastruct.UserGetHomeGoodsDataTime)
+				update_uggt.GetDataTime = now_time
+				engine.Where("id=?", uggt.Id).Cols("get_data_time").Update(update_uggt)
+			} else {
+				new_uggt := new(datastruct.UserGetHomeGoodsDataTime)
+				new_uggt.ClassId = classid
+				new_uggt.UserId = user_id
+				new_uggt.GetDataTime = now_time
+				engine.Insert(new_uggt)
+			}
 		}
 	}
 	return resp_goods
