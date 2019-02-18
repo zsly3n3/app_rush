@@ -3528,6 +3528,14 @@ func (handle *DBHandler) GetGoldPosters() (interface{}, datastruct.CodeType) {
 	engine.Where("end_time < ?", now_time).Delete(new(datastruct.GoldPoster))
 	g_posts := make([]*datastruct.GoldPoster, 0)
 	engine.Desc("end_time").Find(&g_posts)
+	for _, v := range g_posts {
+		wrgp := new(datastruct.WebResponseGoldPoster)
+		wrgp.Id = v.Id
+		wrgp.EndTime = v.EndTime
+		wrgp.GoldCount = v.GoldCount
+		wrgp.StartTime = v.StartTime
+		wrgp.QRCode = fmt.Sprintf("%v/goldposter?pid=%d", conf.Server.Domain, v.Id)
+	}
 	return g_posts, datastruct.NULLError
 }
 

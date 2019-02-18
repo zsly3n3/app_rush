@@ -778,3 +778,11 @@ type WebResponseAllWebUser struct {
 	LoginName     string `json:"loginname"`
 	PermissionIds []int  `json:"permission"`
 }
+
+type WebResponseGoldPoster struct {
+	Id        int    `json:"id"`
+	StartTime int64  `json:"starttime"`
+	EndTime   int64  `json:"endtime"`
+	GoldCount int    `json:"goldcount"`
+	QRCode    string `json:"qrcode"`
+}

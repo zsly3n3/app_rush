@@ -556,8 +556,8 @@ type UserGetHomeGoodsDataTime struct {
 }
 
 type GoldPoster struct {
-	Id        int   `xorm:"not null pk autoincr INT(11)" json:"id"` //自增id
-	StartTime int64 `xorm:"bigint not null"  json:"starttime"`
-	EndTime   int64 `xorm:"bigint not null"  json:"endtime"`
-	GoldCount int   `xorm:"not null INT(11)" json:"goldcount"`
+	Id        int   `xorm:"not null pk autoincr INT(11)"` //自增id
+	StartTime int64 `xorm:"bigint not null"`
+	EndTime   int64 `xorm:"bigint not null"`
+	GoldCount int   `xorm:"not null INT(11)"`
 }
