@@ -1552,4 +1552,5 @@ func WebRegister(r *gin.Engine, eventHandler *event.EventHandler) {
 	getAllMenuInfo(r, eventHandler)              //获取所有菜单信息
 	updateWebUserPwd(r, eventHandler)            //修改web用户密码,不需要权限检测
 	getCommissionStatistics(r, eventHandler)     //佣金分成统计
+	getAvailableGoodsClass(r, eventHandler)
 }
