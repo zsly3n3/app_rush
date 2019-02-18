@@ -1479,4 +1479,5 @@ func Register(r *gin.Engine, eventHandler *event.EventHandler) {
 	getRegisterGift(r, eventHandler)
 	appGetDefaultAgency(r, eventHandler)
 	IsRefreshHomeGoodsData(r, eventHandler)
+
 }

@@ -3522,5 +3522,14 @@ func (handle *DBHandler) DeleteGoldPoster(id int) datastruct.CodeType {
 	return datastruct.NULLError
 }
 
+func (handle *DBHandler) GetGoldPosters() (interface{}, datastruct.CodeType) {
+	engine := handle.mysqlEngine
+	now_time := time.Now().Unix()
+	engine.Where("end_time < ?", now_time).Delete(new(datastruct.GoldPoster))
+	g_posts := make([]*datastruct.GoldPoster, 0)
+	engine.Desc("end_time").Find(&g_posts)
+	return g_posts, datastruct.NULLError
+}
+
 // var valuesSlice = make([]interface{}, len(cols))
 // has, err := engine.Where("id = ?", id).Cols(cols...).Get(&valuesSlice)

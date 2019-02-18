@@ -1503,6 +1503,27 @@ func DeleteGoldPoster(r *gin.Engine, eventHandler *event.EventHandler) {
 	})
 }
 
+func getGoldPosters(r *gin.Engine, eventHandler *event.EventHandler) {
+	url := "/web/allgoldposters"
+	r.GET(url, func(c *gin.Context) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
+			return
+		}
+		data, code := eventHandler.GetGoldPosters()
+		if code == datastruct.NULLError {
+			c.JSON(200, gin.H{
+				"code": code,
+				"data": data,
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"code": code,
+			})
+		}
+	})
+}
+
 func WebRegister(r *gin.Engine, eventHandler *event.EventHandler) {
 	editDomain(r, eventHandler)                  //添加或修改域名
 	updateSendInfo(r, eventHandler)              //商品已发货
@@ -1578,6 +1599,7 @@ func WebRegister(r *gin.Engine, eventHandler *event.EventHandler) {
 	updateWebUserPwd(r, eventHandler)            //修改web用户密码,不需要权限检测
 	getCommissionStatistics(r, eventHandler)     //佣金分成统计
 	getAvailableGoodsClass(r, eventHandler)      //获取可用的商品类型
-	CreateGoldPoster(r, eventHandler)            //////生成金币海报信息
-	DeleteGoldPoster(r, eventHandler)
+	CreateGoldPoster(r, eventHandler)            //生成金币海报
+	DeleteGoldPoster(r, eventHandler)            //删除金币海报
+	getGoldPosters(r, eventHandler)              //获取所有金币海报
 }

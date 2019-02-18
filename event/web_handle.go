@@ -715,3 +715,7 @@ func (handle *EventHandler) DeleteGoldPoster(c *gin.Context) datastruct.CodeType
 	}
 	return handle.dbHandler.DeleteGoldPoster(body.Id)
 }
+
+func (handle *EventHandler) GetGoldPosters() (interface{}, datastruct.CodeType) {
+	return handle.dbHandler.GetGoldPosters()
+}
