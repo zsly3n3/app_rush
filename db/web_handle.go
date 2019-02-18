@@ -61,6 +61,7 @@ func (handle *DBHandler) EditGoods(body *datastruct.EditGoodsBody) datastruct.Co
 	session := engine.NewSession()
 	defer session.Close()
 	session.Begin()
+
 	goods := new(datastruct.Goods)
 	goods.Brand = body.Brand
 	goods.GoodsClassId = body.Classid
@@ -87,7 +88,12 @@ func (handle *DBHandler) EditGoods(body *datastruct.EditGoodsBody) datastruct.Co
 	var isUpdate bool
 	rewardPool := new(datastruct.GoodsRewardPool)
 	rewardPool.LimitAmount = body.LimitAmount
+
+	isUpdate_GoodsClassUpdateAt := false
+	var old_GoodsClassId int
+	var new_GoodsClassId int
 	if body.Goodsid <= 0 {
+		isUpdate_GoodsClassUpdateAt = true
 		affected, err = session.Insert(goods)
 		if err != nil || affected <= 0 {
 			rollback("DBHandler->EditGoods InsertGoods err", session)
@@ -102,11 +108,27 @@ func (handle *DBHandler) EditGoods(body *datastruct.EditGoodsBody) datastruct.Co
 		}
 		isUpdate = false
 	} else {
+
+		old_GoodsData := new(datastruct.Goods)
+		has, err = session.Where("id=?", body.Goodsid).Get(old_GoodsData)
+		if err != nil || !has {
+			str := fmt.Sprintf("DBHandler->EditGoods has not goods_id:%d", body.Goodsid)
+			rollback(str, session)
+			return datastruct.GetDataFailed
+		}
+
+		if old_GoodsData.ReClassid != body.ReClassid || old_GoodsData.SendedOut != body.SendedOut || old_GoodsData.Name != body.Name || old_GoodsData.RushPrice != body.Rushprice || old_GoodsData.SortId != body.Sortid || old_GoodsData.IsHidden != body.IsHidden || old_GoodsData.GoodsClassId != body.Classid || !strings.Contains(body.Base64str[0], conf.Server.Domain) {
+			isUpdate_GoodsClassUpdateAt = true
+			old_GoodsClassId = old_GoodsData.GoodsClassId
+			new_GoodsClassId = body.Classid
+		}
+
 		affected, err = session.Where("id=?", body.Goodsid).Cols("percent", "words16", "re_classid", "sended_out", "name", "price", "price_desc", "rush_price", "rush_price_desc", "goods_desc", "brand", "sort_id", "goods_class_id", "is_hidden", "count", "type", "original_price", "post_age").Update(goods)
 		if err != nil {
 			rollback("DBHandler->EditGoods UpdateGoods err", session)
 			return datastruct.UpdateDataFailed
 		}
+
 		affected, err = session.Where("goods_id=?", body.Goodsid).Cols("limit_amount").Update(rewardPool)
 		if err != nil {
 			rollback("DBHandler->EditGoods UpdateGoods err", session)
@@ -248,6 +270,28 @@ func (handle *DBHandler) EditGoods(body *datastruct.EditGoodsBody) datastruct.Co
 			affected, err = session.Where("level=? and goods_id=?", paymode.Level, paymode.GoodsId).Cols("rouge_count", "difficulty", "game_time").Update(paymode)
 			if err != nil {
 				rollback("DBHandler->EditGoods Update PayModeRougeGame err", session)
+				return datastruct.UpdateDataFailed
+			}
+		}
+	}
+
+	if isUpdate_GoodsClassUpdateAt {
+		now_time := time.Now().Unix()
+		g_class := new(datastruct.GoodsClass)
+		g_class.UpdateAt = now_time
+		_, err = session.Where("id=?", new_GoodsClassId).Cols("update_at").Update(g_class)
+		if err != nil {
+			str := fmt.Sprintf("DBHandler->EditGoods update goods_class err:%v", err.Error())
+			rollback(str, session)
+			return datastruct.UpdateDataFailed
+		}
+		if old_GoodsClassId != new_GoodsClassId {
+			old_g_class := new(datastruct.GoodsClass)
+			old_g_class.UpdateAt = now_time
+			_, err = session.Where("id=?", old_GoodsClassId).Cols("update_at").Update(old_g_class)
+			if err != nil {
+				str := fmt.Sprintf("DBHandler->EditGoods update old_GoodsClass err:%v", err.Error())
+				rollback(str, session)
 				return datastruct.UpdateDataFailed
 			}
 		}

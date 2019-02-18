@@ -61,6 +61,7 @@ type GoodsClass struct {
 	IsHidden int    `xorm:"TINYINT(1) not null default 0" json:"ishidden"` //0为显示,1为隐藏
 	SortId   int    `xorm:"not null INT(11) default 0" json:"sortid"`      //排序编号,根据该字段降序查询
 	Icon     string `xorm:"VARCHAR(255) not null" json:"icon"`             //类型图标
+	UpdateAt int64  `xorm:"bigint not null default 0"`                     //商品更新时间
 }
 
 type AdLocation int
