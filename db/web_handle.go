@@ -1435,6 +1435,23 @@ func (handle *DBHandler) GetAllGoodsClasses(body *datastruct.WebQueryGoodsClassB
 	return resp, datastruct.NULLError
 }
 
+func (handle *DBHandler) GetWebGoodsClass() (interface{}, datastruct.CodeType) {
+	engine := handle.mysqlEngine
+	classinfo := make([]*datastruct.GoodsClass, 0)
+	err := engine.Where("is_hidden=?", 0).Desc("sort_id").Asc("id").Find(&classinfo)
+	if err != nil {
+		return nil, datastruct.GetDataFailed
+	}
+	resp := make([]*datastruct.WebResponseAvailableGoodsClass, 0)
+	for _, v := range classinfo {
+		gclass := new(datastruct.WebResponseAvailableGoodsClass)
+		gclass.Id = v.Id
+		gclass.Name = v.Name
+		resp = append(resp, gclass)
+	}
+	return resp, datastruct.NULLError
+}
+
 type webDepositInfo struct {
 	datastruct.UserDepositInfo `xorm:"extends"`
 	datastruct.UserInfo        `xorm:"extends"`

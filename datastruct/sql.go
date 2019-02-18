@@ -547,3 +547,9 @@ type WebSecondaryMenuApi struct {
 	Method      string `xorm:"VARCHAR(20) not null"`  //大写POST,GET,PUT等
 	Url         string `xorm:"VARCHAR(100) not null"` //全小写
 }
+
+type UserGetHomeGoodsDataTime struct {
+	UserId      int   `xorm:"not null pk INT(11)"` //用户id
+	ClassId     int   `xorm:"not null INT(11)"`    //商品类型id
+	GetDataTime int64 `xorm:"bigint not null"`     //获取数据的时间
+}

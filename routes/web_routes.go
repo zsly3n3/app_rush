@@ -572,6 +572,27 @@ func getAllGoodsClasses(r *gin.Engine, eventHandler *event.EventHandler) {
 	})
 }
 
+func getAvailableGoodsClass(r *gin.Engine, eventHandler *event.EventHandler) {
+	url := "/web/availablegoodsclass"
+	r.GET(url, func(c *gin.Context) {
+		_, tf := checkPermission(c, url, eventHandler)
+		if !tf {
+			return
+		}
+		data, code := eventHandler.GetWebGoodsClass()
+		if code == datastruct.NULLError {
+			c.JSON(200, gin.H{
+				"code": code,
+				"data": data,
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"code": code,
+			})
+		}
+	})
+}
+
 func getAllDepositInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/querydepositinfo"
 	r.POST(url, func(c *gin.Context) {

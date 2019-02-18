@@ -168,6 +168,10 @@ func (handle *EventHandler) GetAllGoodsClasses(body *datastruct.WebQueryGoodsCla
 	return handle.dbHandler.GetAllGoodsClasses(body)
 }
 
+func (handle *EventHandler) GetWebGoodsClass() (interface{}, datastruct.CodeType) {
+	return handle.dbHandler.GetWebGoodsClass()
+}
+
 func (handle *EventHandler) GetAllDepositInfo(c *gin.Context) (interface{}, datastruct.CodeType) {
 	var body datastruct.WebQueryDepositInfoBody
 	err := c.BindJSON(&body)

@@ -669,6 +669,11 @@ type WebResponseReClass struct {
 	Icon string `json:"icon"`      //类型图标
 }
 
+type WebResponseAvailableGoodsClass struct {
+	Id   int    `json:"classid"`
+	Name string `json:"name"`
+}
+
 type WebUserAppraise struct {
 	Id        int           `json:"id"`      //自增id
 	ImgUrls   []string      `json:"imgurls"` //图片url
