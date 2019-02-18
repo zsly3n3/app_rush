@@ -131,6 +131,7 @@ const (
 	DownLoadAppType                       //下载app送的金币
 	AppraisedType                         //评价商品送的金币
 	RegisterType                          //新人福利
+	GoldPosterType                        //扫金币海报获取金币
 )
 
 type UserAppraiseType int //用户评价类型

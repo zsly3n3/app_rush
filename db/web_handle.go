@@ -3498,7 +3498,28 @@ func (handle *DBHandler) GetCommissionStatistics(body *datastruct.WebCommissionS
 	statistics.RemainingDrawTotal = statistics.BalanceTotal - statistics.DrawTotal
 
 	return statistics, datastruct.NULLError
+}
 
+func (handle *DBHandler) CreateGoldPoster(body *datastruct.WebCreateGoldPosterBody) datastruct.CodeType {
+	g_poster := new(datastruct.GoldPoster)
+	g_poster.StartTime = body.StartTime
+	g_poster.EndTime = body.EndTime
+	g_poster.GoldCount = body.GoldCount
+	engine := handle.mysqlEngine
+	rs, err := engine.Insert(g_poster)
+	if err != nil || rs <= 0 {
+		return datastruct.UpdateDataFailed
+	}
+	return datastruct.NULLError
+}
+
+func (handle *DBHandler) DeleteGoldPoster(id int) datastruct.CodeType {
+	engine := handle.mysqlEngine
+	rs, err := engine.Where("id=?", id).Delete(new(datastruct.GoldPoster))
+	if err != nil || rs <= 0 {
+		return datastruct.UpdateDataFailed
+	}
+	return datastruct.NULLError
 }
 
 // var valuesSlice = make([]interface{}, len(cols))

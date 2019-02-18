@@ -357,6 +357,12 @@ type WebUserPwdBody struct {
 	NewPwd string `json:"newpwd"`
 }
 
+type WebCreateGoldPosterBody struct {
+	StartTime int64 `json:"starttime"`
+	EndTime   int64 `json:"endtime"`
+	GoldCount int   `json:"gold"`
+}
+
 //Web Response
 type WebResponseGoods struct {
 	Total int                     `json:"total"`

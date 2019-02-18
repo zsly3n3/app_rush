@@ -698,3 +698,20 @@ func (handle *EventHandler) GetCommissionStatistics(c *gin.Context) (interface{}
 	rs = list
 	return rs, datastruct.NULLError
 }
+
+func (handle *EventHandler) CreateGoldPoster(c *gin.Context) datastruct.CodeType {
+	var body datastruct.WebCreateGoldPosterBody
+	err := c.BindJSON(&body)
+	if err != nil || body.StartTime < 0 || body.EndTime < 0 || body.StartTime >= body.EndTime || body.GoldCount <= 0 || body.GoldCount > 9 {
+		return datastruct.ParamError
+	}
+	return handle.dbHandler.CreateGoldPoster(&body)
+}
+func (handle *EventHandler) DeleteGoldPoster(c *gin.Context) datastruct.CodeType {
+	var body datastruct.WebDeleteUserAppraiseBody
+	err := c.BindJSON(&body)
+	if err != nil || body.Id <= 0 {
+		return datastruct.ParamError
+	}
+	return handle.dbHandler.DeleteGoldPoster(body.Id)
+}

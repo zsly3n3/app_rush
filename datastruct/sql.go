@@ -554,3 +554,10 @@ type UserGetHomeGoodsDataTime struct {
 	ClassId     int   `xorm:"not null INT(11)"`             //商品类型id
 	GetDataTime int64 `xorm:"bigint not null"`              //获取数据的时间
 }
+
+type GoldPoster struct {
+	Id        int   `xorm:"not null pk autoincr INT(11)"` //自增id
+	StartTime int64 `xorm:"bigint not null"`
+	EndTime   int64 `xorm:"bigint not null"`
+	GoldCount int   `xorm:"not null INT(11)"`
+}
