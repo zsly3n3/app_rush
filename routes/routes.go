@@ -1417,6 +1417,30 @@ func IsRefreshHomeGoodsData(r *gin.Engine, eventHandler *event.EventHandler) {
 	})
 }
 
+func getGoldFromPoster(r *gin.Engine, eventHandler *event.EventHandler) {
+	r.GET("/app/goldposter/:userid/:gpid", func(c *gin.Context) {
+		userid := tools.StringToInt(c.Param("userid"))
+		gpid := tools.StringToInt(c.Param("gpid"))
+		if userid <= 0 || gpid <= 0 {
+			c.JSON(200, gin.H{
+				"code": datastruct.ParamError,
+			})
+			return
+		}
+		data, code := eventHandler.GetGoldFromPoster(userid, gpid)
+		if code == datastruct.NULLError {
+			c.JSON(200, gin.H{
+				"code": code,
+				"data": data,
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"code": code,
+			})
+		}
+	})
+}
+
 func Register(r *gin.Engine, eventHandler *event.EventHandler) {
 	getAuthAddr(r, eventHandler)
 	getKfInfo(r, eventHandler)
@@ -1479,5 +1503,5 @@ func Register(r *gin.Engine, eventHandler *event.EventHandler) {
 	getRegisterGift(r, eventHandler)
 	appGetDefaultAgency(r, eventHandler)
 	IsRefreshHomeGoodsData(r, eventHandler)
-
+	getGoldFromPoster(r, eventHandler) //金币海报领取
 }

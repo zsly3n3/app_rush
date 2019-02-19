@@ -2922,5 +2922,10 @@ func (handle *DBHandler) UpdateGoodsClassTime() {
 	engine.Exec(sql, time.Now().Unix())
 }
 
+func (handle *DBHandler) GetGoldFromPoster(userId int, gpid int) (interface{}, datastruct.CodeType) {
+
+	return nil, datastruct.NULLError
+}
+
 // var valuesSlice = make([]interface{}, len(cols))
 // has, err := engine.Where("id = ?", id).Cols(cols...).Get(&valuesSlice)

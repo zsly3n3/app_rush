@@ -320,3 +320,21 @@ func securePost(url string, xmlContent []byte, isOnlyApp bool) (*http.Response, 
 		"application/xml",
 		bytes.NewBuffer(xmlContent))
 }
+
+type SortLinkData struct {
+	ErrorInfo string `json:"err"`
+	Url       string `json:"url"`
+}
+
+func GetSortLink(long_link string) string {
+	var buf bytes.Buffer
+	buf.WriteString("http://api.suolink.cn/api.php?format=json&url=" + long_link)
+	buf.WriteString("&key=5c625f408e676d24092f6619@177aadbb81e17e23a6f5282a12c3a8b8")
+	url := buf.String()
+	p_body := httpGet(url)
+	sortLink := new(SortLinkData)
+	if json_err := json.Unmarshal(*p_body, sortLink); json_err == nil {
+		return sortLink.Url
+	}
+	return ""
+}
