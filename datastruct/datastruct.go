@@ -603,5 +603,6 @@ func ResponseLoginData(u_data *UserInfo) map[string]interface{} {
 	}
 	mp := make(map[string]interface{})
 	mp["token"] = u_data.Token
+	mp["userid"] = u_data.Id
 	return mp
 }

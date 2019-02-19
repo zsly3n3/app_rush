@@ -3535,7 +3535,10 @@ func (handle *DBHandler) GetGoldPosters() (interface{}, datastruct.CodeType) {
 		wrgp.EndTime = v.EndTime
 		wrgp.GoldCount = v.GoldCount
 		wrgp.StartTime = v.StartTime
-		wrgp.QRCode = fmt.Sprintf("%v/goldposter?pid=%d", conf.Server.Domain, v.Id)
+		state_str := fmt.Sprintf("%d,goldposter", v.Id)
+		authUrl := handle.GetAuthUrl()
+		link := tools.CreateAuthLink(state_str, datastruct.WX_GZH_AppID, authUrl)
+		wrgp.QRCode = link
 		resp = append(resp, wrgp)
 	}
 	return resp, datastruct.NULLError
