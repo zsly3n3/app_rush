@@ -3545,7 +3545,6 @@ func (handle *DBHandler) GetGoldPosters() (interface{}, datastruct.CodeType) {
 			return nil, datastruct.GetDataFailed
 		}
 		wrgp.QRCode = sort_link
-		wrgp.QRCode = long_link
 		resp = append(resp, wrgp)
 	}
 	return resp, datastruct.NULLError
