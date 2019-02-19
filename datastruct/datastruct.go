@@ -1,6 +1,9 @@
 package datastruct
 
-import "time"
+import (
+	"app/log"
+	"time"
+)
 
 const AdminLevelID = 1
 const NormalLevelID = 2
@@ -603,6 +606,7 @@ func ResponseLoginData(u_data *UserInfo) map[string]interface{} {
 	}
 	mp := make(map[string]interface{})
 	mp["token"] = u_data.Token
+	log.Debug("u_data id:%v", u_data.Id)
 	mp["userid"] = u_data.Id
 	return mp
 }
