@@ -5,7 +5,6 @@ import (
 	"app/datastruct"
 	"app/log"
 	"app/osstool"
-	"app/thirdParty"
 	"app/tools"
 	"fmt"
 	"math"
@@ -3539,12 +3538,13 @@ func (handle *DBHandler) GetGoldPosters() (interface{}, datastruct.CodeType) {
 		state_str := fmt.Sprintf("%d,goldposter", v.Id)
 		authUrl := handle.GetAuthUrl()
 		long_link := tools.CreateAuthLink(state_str, datastruct.WX_GZH_AppID, authUrl)
-		sort_link := thirdParty.GetSortLink(long_link)
-		if sort_link == "" {
-			log.Error("GetGoldPosters err, gold_poster id:%v", v.Id)
-			return nil, datastruct.GetDataFailed
-		}
-		wrgp.QRCode = sort_link
+		// sort_link := thirdParty.GetSortLink(long_link)
+		// if sort_link == "" {
+		// 	log.Error("GetGoldPosters err, gold_poster id:%v", v.Id)
+		// 	return nil, datastruct.GetDataFailed
+		// }
+		//wrgp.QRCode = sort_link
+		wrgp.QRCode = long_link
 		resp = append(resp, wrgp)
 	}
 	return resp, datastruct.NULLError
