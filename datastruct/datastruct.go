@@ -1,7 +1,6 @@
 package datastruct
 
 import (
-	"app/log"
 	"time"
 )
 
@@ -606,7 +605,6 @@ func ResponseLoginData(u_data *UserInfo) map[string]interface{} {
 	}
 	mp := make(map[string]interface{})
 	mp["token"] = u_data.Token
-	log.Debug("u_data id:%v", u_data.Id)
 	mp["userid"] = u_data.Id
 	return mp
 }
