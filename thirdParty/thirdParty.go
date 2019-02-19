@@ -17,6 +17,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"sort"
 	"strings"
 )
@@ -328,6 +329,8 @@ type SortLinkData struct {
 
 func GetSortLink(long_link string) string {
 	var buf bytes.Buffer
+	long_link = url.QueryEscape(long_link)
+	long_link = strings.Replace(long_link, "+", "%20", -1)
 	buf.WriteString("http://api.suolink.cn/api.php?format=json&url=" + long_link)
 	buf.WriteString("&key=5c625f408e676d24092f6619@177aadbb81e17e23a6f5282a12c3a8b8")
 	url := buf.String()
