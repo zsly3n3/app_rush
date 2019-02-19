@@ -1117,7 +1117,7 @@ func (handle *DBHandler) GetAgentlevelN(userId int, users []int) (interface{}, d
 
 	err := engine.Table("invite_info").Join("INNER", "user_info", "invite_info.receiver = user_info.id").In("sender", users).Desc("invite_info.created_at").Limit(100, 0).Find(&arr)
 	if err != nil {
-		log.Debug("getAgentlevelN join :%s", err.Error())
+		log.Error("getAgentlevelN join :%s", err.Error())
 		return nil, datastruct.GetDataFailed
 	}
 	resp := new(datastruct.ResponseAgentInfo)
@@ -1130,7 +1130,7 @@ func (handle *DBHandler) GetAgentlevelN(userId int, users []int) (interface{}, d
 		balanceInfo := new(datastruct.BalanceInfo)
 		total, err := engine.Where("from_user_id = ? and to_user_id = ?", v.UserInfo.Id, userId).Sum(balanceInfo, "earn_balance")
 		if err != nil {
-			log.Debug("getAgentlevelN Sum :%s", err.Error())
+			log.Error("getAgentlevelN Sum :%s", err.Error())
 			return nil, datastruct.GetDataFailed
 		}
 		agent.CreatedAt = v.InviteInfo.CreatedAt
@@ -2922,9 +2922,78 @@ func (handle *DBHandler) UpdateGoodsClassTime() {
 	engine.Exec(sql, time.Now().Unix())
 }
 
-func (handle *DBHandler) GetGoldFromPoster(userId int, gpid int) (interface{}, datastruct.CodeType) {
-
-	return nil, datastruct.NULLError
+func (handle *DBHandler) GetGoldFromPoster(userId int, gpid int, addr string) (interface{}, datastruct.CodeType) {
+	now_time := time.Now().Unix()
+	engine := handle.mysqlEngine
+	gp := new(datastruct.GoldPoster)
+	invalid_tips := "该二维码已经失效，可联系客服扫最新的二维码领取哦"
+	err_tips := "系统出错，我们已经在加急处理中了"
+	resp := new(datastruct.ResponseGoldFromPoster)
+	has, err := engine.Where("id=?", gpid).Get(gp)
+	if err != nil {
+		resp.Tips = err_tips
+		return resp, datastruct.GetDataFailed
+	}
+	resp.Addr = addr
+	if has {
+		if now_time < gp.StartTime {
+			resp.Tips = "活动还未开始，请在活动开始后来领取"
+		} else if now_time > gp.EndTime {
+			resp.Tips = invalid_tips
+		} else {
+			has, err = engine.Where("user_id=? and gold_poster_id=?", userId, gpid).Get(new(datastruct.SaveUserGetGoldPoster))
+			if has {
+				resp.Tips = "亲，你今天已经领取过了，明天再来吧"
+			} else {
+				resp.Tips = fmt.Sprintf("恭喜你获得%d个游戏币", gp.GoldCount)
+				session := engine.NewSession()
+				defer session.Close()
+				session.Begin()
+				add_goldcount := gp.GoldCount
+				sql := "update user_info set gold_count = gold_count + ? where id = ?"
+				goldType := datastruct.GoldPosterType
+				res, err1 := session.Exec(sql, add_goldcount, userId)
+				affected, err2 := res.RowsAffected()
+				if err1 != nil || err2 != nil || affected <= 0 {
+					rollbackError("GetGoldFromPoster update AddGoldCount err", session)
+					resp.Tips = err_tips
+					return resp, datastruct.UpdateDataFailed
+				}
+				goldChangeInfo := new(datastruct.GoldChangeInfo)
+				goldChangeInfo.UserId = userId
+				goldChangeInfo.CreatedAt = now_time
+				goldChangeInfo.VarGold = int64(add_goldcount)
+				goldChangeInfo.ChangeType = goldType
+				_, err = session.Insert(goldChangeInfo)
+				if err != nil {
+					str := fmt.Sprintf("GetGoldFromPoster Insert GoldChangeInfo :%s", err.Error())
+					rollbackError(str, session)
+					resp.Tips = err_tips
+					return resp, datastruct.UpdateDataFailed
+				}
+				sgp := new(datastruct.SaveUserGetGoldPoster)
+				sgp.GoldPosterId = gpid
+				sgp.UserId = userId
+				_, err = session.Insert(sgp)
+				if err != nil {
+					str := fmt.Sprintf("GetGoldFromPoster Insert SaveUserGetGoldPoster :%s", err.Error())
+					rollbackError(str, session)
+					resp.Tips = err_tips
+					return resp, datastruct.UpdateDataFailed
+				}
+				err = session.Commit()
+				if err != nil {
+					str := fmt.Sprintf("DBHandler->GetGoldFromPoster Commit :%s", err.Error())
+					rollbackError(str, session)
+					resp.Tips = err_tips
+					return resp, datastruct.UpdateDataFailed
+				}
+			}
+		}
+	} else {
+		resp.Tips = invalid_tips
+	}
+	return resp, datastruct.NULLError
 }
 
 // var valuesSlice = make([]interface{}, len(cols))

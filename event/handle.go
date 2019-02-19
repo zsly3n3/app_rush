@@ -304,7 +304,6 @@ func (handle *EventHandler) GetGoldInfo(userId int, pageIndex int, pageSize int)
 }
 
 func (handle *EventHandler) Purchase(userId int, purchaseType datastruct.PurchaseType, purchase_id int, ip_addr string, platform datastruct.Platform) (interface{}, datastruct.CodeType) {
-
 	var code datastruct.CodeType
 	var m_data *datastruct.MemberLevelData
 	if purchaseType == datastruct.VipType {
@@ -724,7 +723,8 @@ func (handle *EventHandler) IsRefreshHomeGoodsData(userId int, classId int) (int
 }
 
 func (handle *EventHandler) GetGoldFromPoster(userId int, gpid int) (interface{}, datastruct.CodeType) {
-	return handle.dbHandler.GetGoldFromPoster(userId, gpid)
+	addr, _ := handle.GetAppAddr()
+	return handle.dbHandler.GetGoldFromPoster(userId, gpid, addr.(string))
 }
 
 // func (handle *EventHandler) UserActivate(userId int) datastruct.CodeType {

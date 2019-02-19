@@ -599,6 +599,11 @@ type ResponseAgencyPage struct {
 	InviteUrl string      `json:"inviteurl"`
 }
 
+type ResponseGoldFromPoster struct {
+	Tips string `json:"tips"`
+	Addr string `json:"addr"`
+}
+
 func ResponseLoginData(u_data *UserInfo) map[string]interface{} {
 	if u_data == nil {
 		return nil

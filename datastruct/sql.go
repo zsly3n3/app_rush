@@ -562,9 +562,8 @@ type GoldPoster struct {
 	GoldCount int   `xorm:"not null INT(11)"`
 }
 
-type UserGetGoldPosterRecord struct {
-	// Id        int   `xorm:"not null pk autoincr INT(11)"` //自增id
-	// StartTime int64 `xorm:"bigint not null"`
-	// EndTime   int64 `xorm:"bigint not null"`
-	// GoldCount int   `xorm:"not null INT(11)"`
+type SaveUserGetGoldPoster struct {
+	Id           int `xorm:"not null pk autoincr INT(11)"` //自增id
+	UserId       int `xorm:"not null INT(11)"`
+	GoldPosterId int `xorm:"not null INT(11)"`
 }
