@@ -1292,7 +1292,6 @@ func (handle *DBHandler) getAgencyStatisticsWithUsers(level int, userId int) *da
 	purchaseTotal = 0
 
 	count := len(results)
-	ids := make([]int, 0, count)
 	for _, v := range results {
 		depositTotal += tools.StringToInt64(string(v["deposit_total"][:]))
 		payRushTotal += tools.StringToInt64(string(v["pay_rush_total"][:]))
@@ -1774,12 +1773,14 @@ func (handle *DBHandler) MyPrentices(body *datastruct.WebGetAgencyInfoBody) (int
 func getAgencyUser(engine *xorm.Engine, body *datastruct.WebGetAgencyInfoBody) ([]*datastruct.WebAgencyUser, int) {
 	resp := make([]*datastruct.WebAgencyUser, 0)
 	var inner_str string
+	userId_str := tools.IntToString(body.UserId)
 	switch body.Level {
 	case 1:
-		inner_str = "from invite_info i inner join user_info u on i.receiver = u.id where i.sender = ?"
+		inner_str = "from invite_info i inner join user_info u on i.receiver = u.id where i.sender = " + userId_str
 	case 2:
-
+		inner_str = "from invite_info i inner join user_info u on i.receiver = u.id where i.sender in (select u.id from invite_info i inner join user_info u on i.receiver = u.id where i.sender = " + userId_str + ")"
 	case 3:
+		inner_str = "from invite_info i inner join user_info u on i.receiver = u.id where i.sender in (select u.id from invite_info i inner join user_info u on i.receiver = u.id where i.sender in (select u.id from invite_info i inner join user_info u on i.receiver = u.id where i.sender = " + userId_str + "))"
 	}
 
 	var rs_sql string
