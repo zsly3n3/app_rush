@@ -2966,5 +2966,19 @@ func (handle *DBHandler) GetGoldFromPoster(userId int, gpid int, addr string) (i
 	return resp, datastruct.NULLError
 }
 
+func (handle *DBHandler) GetRandomLotteryList() (interface{}, datastruct.CodeType) {
+	engine := handle.mysqlEngine
+	sql := "select img_name from random_lottery_goods order by created_at desc"
+	results, err := engine.Query(sql)
+	if err != nil {
+		return nil, datastruct.GetDataFailed
+	}
+	list := make([]string, 0, len(results))
+	for _, v := range results {
+		list = append(list, string(v["img_name"][:]))
+	}
+	return list, datastruct.NULLError
+}
+
 // var valuesSlice = make([]interface{}, len(cols))
 // has, err := engine.Where("id = ?", id).Cols(cols...).Get(&valuesSlice)

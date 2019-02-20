@@ -713,6 +713,10 @@ func (handle *EventHandler) GetGoldFromPoster(userId int, gpid int) (interface{}
 	return handle.dbHandler.GetGoldFromPoster(userId, gpid, addr.(string))
 }
 
+func (handle *EventHandler) GetRandomLotteryList() (interface{}, datastruct.CodeType) {
+	return handle.dbHandler.GetRandomLotteryList()
+}
+
 // func (handle *EventHandler) UserActivate(userId int) datastruct.CodeType {
 // 	return handle.dbHandler.UserActivate(userId)
 // }

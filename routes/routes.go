@@ -1427,6 +1427,22 @@ func getGoldFromPoster(r *gin.Engine, eventHandler *event.EventHandler) {
 	})
 }
 
+func getRandomLotteryList(r *gin.Engine, eventHandler *event.EventHandler) {
+	r.GET("/app/randomlotterylist", func(c *gin.Context) {
+		data, code := eventHandler.GetRandomLotteryList()
+		if code == datastruct.NULLError {
+			c.JSON(200, gin.H{
+				"code": code,
+				"data": data,
+			})
+		} else {
+			c.JSON(200, gin.H{
+				"code": code,
+			})
+		}
+	})
+}
+
 func Register(r *gin.Engine, eventHandler *event.EventHandler) {
 	getAuthAddr(r, eventHandler)
 	getKfInfo(r, eventHandler)
@@ -1489,4 +1505,5 @@ func Register(r *gin.Engine, eventHandler *event.EventHandler) {
 	appGetDefaultAgency(r, eventHandler)
 	IsRefreshHomeGoodsData(r, eventHandler)
 	getGoldFromPoster(r, eventHandler) //金币海报领取
+	getRandomLotteryList(r, eventHandler)
 }
