@@ -1268,22 +1268,15 @@ func (handle *DBHandler) EditServerInfo(version string, isMaintain int) datastru
 	return datastruct.NULLError
 }
 
-func (handle *DBHandler) getAgencyStatisticsWithUsers(level int, userId int) (*datastruct.WebAgencyStatistics, []int) {
-	// if users == nil || len(users) <= 0 {
-	// 	statistics := new(datastruct.WebAgencyStatistics)
-	// 	statistics.Count = 0
-	// 	statistics.DepositTotal = 0
-	// 	statistics.PayRushTotal = 0
-	// 	statistics.PurchaseTotal = 0
-	// 	return statistics, nil
-	// }
+func (handle *DBHandler) getAgencyStatisticsWithUsers(level int, userId int) *datastruct.WebAgencyStatistics {
 	var sql string
 	switch level {
 	case 1:
 		sql = "select u.deposit_total,u.pay_rush_total,u.purchase_total from invite_info i inner join user_info u on i.receiver = u.id where i.sender = ?"
 	case 2:
-
+		sql = "select u.deposit_total,u.pay_rush_total,u.purchase_total from invite_info i inner join user_info u on i.receiver = u.id where i.sender in (select u.id from invite_info i inner join user_info u on i.receiver = u.id where i.sender = ?)"
 	case 3:
+		sql = "select u.deposit_total,u.pay_rush_total,u.purchase_total from invite_info i inner join user_info u on i.receiver = u.id where i.sender in (select u.id from invite_info i inner join user_info u on i.receiver = u.id where i.sender in (select u.id from invite_info i inner join user_info u on i.receiver = u.id where i.sender = ?))"
 	}
 
 	engine := handle.mysqlEngine
@@ -1304,7 +1297,6 @@ func (handle *DBHandler) getAgencyStatisticsWithUsers(level int, userId int) (*d
 		depositTotal += tools.StringToInt64(string(v["deposit_total"][:]))
 		payRushTotal += tools.StringToInt64(string(v["pay_rush_total"][:]))
 		purchaseTotal += tools.StringToFloat64(string(v["purchase_total"][:]))
-		ids = append(ids, tools.StringToInt(string(v["id"][:])))
 	}
 
 	statistics := new(datastruct.WebAgencyStatistics)
@@ -1312,7 +1304,7 @@ func (handle *DBHandler) getAgencyStatisticsWithUsers(level int, userId int) (*d
 	statistics.DepositTotal = depositTotal
 	statistics.PayRushTotal = payRushTotal
 	statistics.PurchaseTotal = purchaseTotal
-	return statistics, ids
+	return statistics
 }
 
 func getUsersStr(users []int) string {
@@ -1764,89 +1756,69 @@ func computeToday(start int64, end int64, engine *xorm.Engine) (int, int, datast
 }*/
 
 func (handle *DBHandler) MyPrentices(body *datastruct.WebGetAgencyInfoBody) (interface{}, datastruct.CodeType) {
-	/*
-		statistics1, users1 := handle.getAgencyStatisticsWithUsers([]int{body.UserId})
-		statistics2, users2 := handle.getAgencyStatisticsWithUsers(users1)
-		statistics3, _ := handle.getAgencyStatisticsWithUsers(users2)
-		statistics_list := make([]*datastruct.WebAgencyStatistics, 0, 3)
-		statistics_list = append(statistics_list, statistics1)
-		statistics_list = append(statistics_list, statistics2)
-		statistics_list = append(statistics_list, statistics3)
-		resp := new(datastruct.WebResponseAgencyData)
-		resp.Statistics = statistics_list
+	statistics1 := handle.getAgencyStatisticsWithUsers(1, body.UserId)
+	statistics2 := handle.getAgencyStatisticsWithUsers(2, body.UserId)
+	statistics3 := handle.getAgencyStatisticsWithUsers(3, body.UserId)
+	statistics_list := make([]*datastruct.WebAgencyStatistics, 0, 3)
+	statistics_list = append(statistics_list, statistics1)
+	statistics_list = append(statistics_list, statistics2)
+	statistics_list = append(statistics_list, statistics3)
+	resp := new(datastruct.WebResponseAgencyData)
+	resp.Statistics = statistics_list
 
-		engine := handle.mysqlEngine
-		switch body.Level {
-		case 1:
-			resp.Users, _, resp.CurrentTotal = getAgencyUser(engine, []int{body.UserId}, false, body)
-		case 2:
-			_, ids, _ := getAgencyUser(engine, []int{body.UserId}, true, nil)
-			resp.Users, _, resp.CurrentTotal = getAgencyUser(engine, ids, false, body)
-		case 3:
-			_, ids1, _ := getAgencyUser(engine, []int{body.UserId}, true, nil)
-			_, ids2, _ := getAgencyUser(engine, ids1, true, nil)
-			resp.Users, _, resp.CurrentTotal = getAgencyUser(engine, ids2, false, body)
-		}
-	*/
-	return nil, datastruct.NULLError
+	engine := handle.mysqlEngine
+	resp.Users, resp.CurrentTotal = getAgencyUser(engine, body)
+	return resp, datastruct.NULLError
 }
 
-func getAgencyUser(engine *xorm.Engine, users []int, isQueryAll bool, body *datastruct.WebGetAgencyInfoBody) ([]*datastruct.WebAgencyUser, []int, int) {
+func getAgencyUser(engine *xorm.Engine, body *datastruct.WebGetAgencyInfoBody) ([]*datastruct.WebAgencyUser, int) {
 	resp := make([]*datastruct.WebAgencyUser, 0)
-	if users == nil || len(users) <= 0 {
-		return resp, nil, 0
+	var inner_str string
+	switch body.Level {
+	case 1:
+		inner_str = "from invite_info i inner join user_info u on i.receiver = u.id where i.sender = ?"
+	case 2:
+
+	case 3:
 	}
-	ids_str := getUsersStr(users)
-	inner_str := "from invite_info i inner join user_info u on i.receiver = u.id where i.sender in (" + ids_str + ")"
 
 	var rs_sql string
 	var current_count int
-	if !isQueryAll {
-		start := (body.PageIndex - 1) * body.PageSize
-		limit := body.PageSize
-		limitStr := fmt.Sprintf(" ORDER BY i.created_at desc LIMIT %d,%d", start, limit)
-		query_str := ""
-		if body.StartTime != 0 && body.EndTime != 0 {
-			query_str += " and i.created_at >= " + tools.Int64ToString(body.StartTime) + " and i.created_at < " + tools.Int64ToString(body.EndTime)
-		}
-		if body.Name != "" {
-			query_str += " and u.nick_name like " + "'%" + body.Name + "%'"
-		}
-		count_sql := "select count(*) " + inner_str + query_str
-		count_results, _ := engine.Query(count_sql)
-		current_count = tools.StringToInt(string(count_results[0]["count(*)"][:]))
 
-		inner_str += query_str + limitStr
-
-		rs_sql = "select u.balance,u.gold_count,i.created_at,u.avatar,u.nick_name,u.deposit_total,u.pay_rush_total,u.purchase_total " + inner_str
-
-	} else {
-		rs_sql = "select u.id " + inner_str
+	start := (body.PageIndex - 1) * body.PageSize
+	limit := body.PageSize
+	limitStr := fmt.Sprintf(" ORDER BY i.created_at desc LIMIT %d,%d", start, limit)
+	query_str := ""
+	if body.StartTime != 0 && body.EndTime != 0 {
+		query_str += " and i.created_at >= " + tools.Int64ToString(body.StartTime) + " and i.created_at < " + tools.Int64ToString(body.EndTime)
 	}
+	if body.Name != "" {
+		query_str += " and u.nick_name like " + "'%" + body.Name + "%'"
+	}
+	count_sql := "select count(*) " + inner_str + query_str
+	count_results, _ := engine.Query(count_sql)
+	current_count = tools.StringToInt(string(count_results[0]["count(*)"][:]))
+
+	inner_str += query_str + limitStr
+
+	rs_sql = "select u.balance,u.gold_count,i.created_at,u.avatar,u.nick_name,u.deposit_total,u.pay_rush_total,u.purchase_total " + inner_str
 
 	results, _ := engine.Query(rs_sql)
 
-	ids := make([]int, 0, len(results))
-	if !isQueryAll {
-		for _, v := range results {
-			agencyUser := new(datastruct.WebAgencyUser)
-			agencyUser.Avatar = string(v["avatar"][:])
-			agencyUser.Balance = tools.StringToFloat64(string(v["balance"][:]))
-			agencyUser.CreatedAt = tools.StringToInt64(string(v["created_at"][:]))
-			agencyUser.DepositTotal = tools.StringToInt64(string(v["deposit_total"][:]))
-			agencyUser.GoldCount = tools.StringToInt64(string(v["gold_count"][:]))
-			agencyUser.NickName = string(v["nick_name"][:])
-			agencyUser.PayRushTotal = tools.StringToInt64(string(v["pay_rush_total"][:]))
-			agencyUser.PurchaseTotal = tools.StringToFloat64(string(v["purchase_total"][:]))
-			resp = append(resp, agencyUser)
-		}
-	} else {
-		for _, v := range results {
-			ids = append(ids, tools.StringToInt(string(v["id"][:])))
-		}
+	for _, v := range results {
+		agencyUser := new(datastruct.WebAgencyUser)
+		agencyUser.Avatar = string(v["avatar"][:])
+		agencyUser.Balance = tools.StringToFloat64(string(v["balance"][:]))
+		agencyUser.CreatedAt = tools.StringToInt64(string(v["created_at"][:]))
+		agencyUser.DepositTotal = tools.StringToInt64(string(v["deposit_total"][:]))
+		agencyUser.GoldCount = tools.StringToInt64(string(v["gold_count"][:]))
+		agencyUser.NickName = string(v["nick_name"][:])
+		agencyUser.PayRushTotal = tools.StringToInt64(string(v["pay_rush_total"][:]))
+		agencyUser.PurchaseTotal = tools.StringToFloat64(string(v["purchase_total"][:]))
+		resp = append(resp, agencyUser)
 	}
 
-	return resp, ids, current_count
+	return resp, current_count
 }
 
 type webMemberOrderData struct {
