@@ -1429,6 +1429,9 @@ func getGoldFromPoster(r *gin.Engine, eventHandler *event.EventHandler) {
 
 func getRandomLotteryList(r *gin.Engine, eventHandler *event.EventHandler) {
 	r.GET("/app/randomlotterylist", func(c *gin.Context) {
+		if !checkVersion(c, eventHandler) {
+			return
+		}
 		data, code := eventHandler.GetRandomLotteryList()
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
