@@ -3506,8 +3506,13 @@ func (handle *DBHandler) DeleteGoldPoster(id int) datastruct.CodeType {
 
 func (handle *DBHandler) GetGoldPosters() (interface{}, datastruct.CodeType) {
 	engine := handle.mysqlEngine
+
 	now_time := time.Now().Unix()
 	engine.Where("end_time < ?", now_time).Delete(new(datastruct.GoldPoster))
+
+	sql := "delete from save_user_get_gold_poster where gold_poster_id not in (select id from gold_poster)"
+	engine.Exec(sql)
+
 	g_posts := make([]*datastruct.GoldPoster, 0)
 	engine.Desc("end_time").Find(&g_posts)
 	resp := make([]*datastruct.WebResponseGoldPoster, 0, len(g_posts))
