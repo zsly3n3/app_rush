@@ -2010,63 +2010,37 @@ func (handle *DBHandler) PurchaseVipSuccess(userId int, vipId int, createTime in
 
 func (handle *DBHandler) StartLottery(userId int, rushprice int64) (interface{}, datastruct.CodeType) {
 	engine := handle.mysqlEngine
-
 	resp := new(datastruct.ResponseLotteryGoodsInfo)
-
 	var goods_1 *datastruct.RandomLotteryGoods
-	var goods_2 *datastruct.RandomLotteryGoods
 	user := new(datastruct.UserInfo)
 	has, err := engine.Where("id=?", userId).Get(user)
 	if err != nil || !has {
 		return nil, datastruct.GetDataFailed
 	}
-	if has && user.DepositTotal <= 0 && user.PurchaseTotal <= 0 {
+	allGoods := make([]*datastruct.RandomLotteryGoods, 0)
+	if has && user.DepositTotal <= 0 && user.PurchaseTotal <= 0 { //没有充值和购买行为的用户,中奖率为0
 		resp.IsGotReward = 0
-		tmp_allGoods := make([]*datastruct.RandomLotteryGoods, 0)
-		err = engine.Where("is_hidden = 0").Find(&tmp_allGoods)
-		min_count := 2
-		if err != nil || len(tmp_allGoods) < min_count {
-			return nil, datastruct.GetDataFailed
-		}
-		rs_goods := getRandomTmpGoods(tmp_allGoods)
-		goods_1 = rs_goods[0]
-		goods_2 = rs_goods[1]
 	} else {
 		goodsPool := new(datastruct.RandomLotteryGoodsPool)
 		has, err = engine.Where("id=?", datastruct.DefaultId).Get(goodsPool)
 		if err != nil || !has {
 			return nil, datastruct.GetDataFailed
 		}
-		allGoods := make([]*datastruct.RandomLotteryGoods, 0)
+		//根据当前池水值,查询出等值的商品
 		err = engine.Where("is_hidden = 0 and price <= ?", goodsPool.Current).Find(&allGoods)
 		length := len(allGoods)
 		if err != nil {
 			return nil, datastruct.GetDataFailed
 		}
 		if length <= 0 {
+			//没有查出等值的商品,中奖率为0
 			resp.IsGotReward = 0
-			tmp_allGoods := make([]*datastruct.RandomLotteryGoods, 0)
-			err = engine.Where("is_hidden = 0").Find(&tmp_allGoods)
-			min_count := 2
-			if err != nil || len(tmp_allGoods) < min_count {
-				return nil, datastruct.GetDataFailed
-			}
-			rs_goods := getRandomTmpGoods(tmp_allGoods)
-			goods_1 = rs_goods[0]
-			goods_2 = rs_goods[1]
 		} else {
-			goods_1 = getRandomGood(allGoods)
-			tmp_allGoods := make([]*datastruct.RandomLotteryGoods, 0)
-			err = engine.Where("is_hidden = 0 and id <> ?", goods_1.Id).Find(&tmp_allGoods)
-			min_count := 1
-			if err != nil || len(tmp_allGoods) < min_count {
-				return nil, datastruct.GetDataFailed
-			}
-			goods_2 = getRandomGood(tmp_allGoods)
+			goods_1 = getRandomGood(allGoods) //作为中奖商品
 			random_rs := tools.RandInt(1, 101)
-
 			var probability int
 			if user.RandomLotterySucceed >= goodsPool.RandomLotteryCount {
+				//当用户超过指定中奖次数,概率恒定为后端指定概率
 				probability = goodsPool.Probability
 			} else {
 				probability = goods_1.Probability
@@ -2077,6 +2051,7 @@ func (handle *DBHandler) StartLottery(userId int, rushprice int64) (interface{},
 				session := engine.NewSession()
 				defer session.Close()
 				session.Begin()
+				//增加用户中奖次数
 				sql := "update user_info set random_lottery_succeed = random_lottery_succeed + 1 where id = ?"
 				res, err1 := session.Exec(sql, userId)
 				affected, err2 := res.RowsAffected()
@@ -2084,6 +2059,7 @@ func (handle *DBHandler) StartLottery(userId int, rushprice int64) (interface{},
 					rollback("DBHandler->StartLottery UpdateUser", session)
 					return nil, datastruct.UpdateDataFailed
 				}
+				//更新中奖池水
 				sql = "update random_lottery_goods_pool set current = case when current - ? > 0 then current - ? else 0 end"
 				_, err = session.Exec(sql, goods_1.Price, goods_1.Price)
 				if err != nil {
@@ -2092,6 +2068,7 @@ func (handle *DBHandler) StartLottery(userId int, rushprice int64) (interface{},
 				}
 				now_time := time.Now().Unix()
 				orderId := tools.StringToInt64(tools.UniqueId())
+				//添加中奖成功订单
 				rlgs := new(datastruct.RandomLotteryGoodsSucceed)
 				rlgs.UserId = userId
 				rlgs.OrderId = orderId
@@ -2102,6 +2079,7 @@ func (handle *DBHandler) StartLottery(userId int, rushprice int64) (interface{},
 					rollback("DBHandler->StartLottery Insert RandomLotteryGoodsSucceed err", session)
 					return nil, datastruct.UpdateDataFailed
 				}
+				//添加中奖成功记录
 				rlgsh := new(datastruct.RandomLotteryGoodsSucceedHistory)
 				rlgsh.DescInfo = fmt.Sprintf("抽中%s*1", goods_1.Name)
 				rlgsh.NickName = user.NickName
@@ -2111,6 +2089,7 @@ func (handle *DBHandler) StartLottery(userId int, rushprice int64) (interface{},
 					rollback("DBHandler->StartLottery Insert RandomLotteryGoodsSucceedHistory err", session)
 					return nil, datastruct.UpdateDataFailed
 				}
+				//添加对应的发货订单
 				sendGoods := new(datastruct.SendGoods)
 				sendGoods.OrderId = orderId
 				sendGoods.SendGoodsState = 0
@@ -2142,17 +2121,9 @@ func (handle *DBHandler) StartLottery(userId int, rushprice int64) (interface{},
 			return nil, datastruct.UpdateDataFailed
 		}
 	}
-
-	list := make([]*datastruct.ResponseLotteryGoods, 0, 2)
-	g1 := new(datastruct.ResponseLotteryGoods)
-	list = append(list, g1)
-	g1.ImgUrl = tools.CreateGoodsImgUrl(goods_1.ImgName)
-	g1.Price = goods_1.Price
-	g2 := new(datastruct.ResponseLotteryGoods)
-	g2.ImgUrl = tools.CreateGoodsImgUrl(goods_2.ImgName)
-	g2.Price = goods_2.Price
-	list = append(list, g2)
-	resp.List = list
+	if resp.IsGotReward == 1 {
+		resp.GoodsImg = tools.CreateGoodsImgUrl(goods_1.ImgName)
+	}
 	return resp, datastruct.NULLError
 }
 
@@ -2225,23 +2196,6 @@ func (handle *DBHandler) GetLotteryGoodsOrderInfo(userId int, pageIndex int, pag
 		resp = append(resp, rs)
 	}
 	return resp, datastruct.NULLError
-}
-
-func getRandomTmpGoods(allGoods []*datastruct.RandomLotteryGoods) []*datastruct.RandomLotteryGoods {
-	length := len(allGoods)
-	allGoods_index := make([]int, 0, length)
-	for i := 0; i < length; i++ {
-		allGoods_index = append(allGoods_index, i)
-	}
-	index_1 := tools.RandInt(0, len(allGoods_index))
-	goods_1 := allGoods[allGoods_index[index_1]]
-	allGoods_index = tools.Remove(allGoods_index, index_1)
-	index_2 := tools.RandInt(0, len(allGoods_index))
-	goods_2 := allGoods[allGoods_index[index_2]]
-	rs := make([]*datastruct.RandomLotteryGoods, 0, 2)
-	rs = append(rs, goods_1)
-	rs = append(rs, goods_2)
-	return rs
 }
 
 func getRandomGood(allGoods []*datastruct.RandomLotteryGoods) *datastruct.RandomLotteryGoods {

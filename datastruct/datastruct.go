@@ -496,14 +496,9 @@ type ResponseMemberData struct {
 	Owned   int    `json:"owned"`  //是否拥有,0为没拥有,1为拥有
 }
 
-type ResponseLotteryGoods struct {
-	ImgUrl string `json:"imgurl"`
-	Price  int64  `json:"price"`
-}
-
 type ResponseLotteryGoodsInfo struct {
-	IsGotReward int                     `json:"isgotreward"` //0为没中,1为中奖
-	List        []*ResponseLotteryGoods `json:"list"`
+	IsGotReward int    `json:"isgotreward"` //0为没中,1为中奖
+	GoodsImg    string `json:"img"`
 }
 
 type ResponseLotteryGoodsSucceedHistory struct {
