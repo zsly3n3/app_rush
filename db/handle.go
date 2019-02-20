@@ -2938,19 +2938,24 @@ func (handle *DBHandler) GetGoldFromPoster(userId int, gpid int, addr string) (i
 	has, err := engine.Where("id=?", gpid).Get(gp)
 	if err != nil {
 		resp.Tips = err_tips
+		resp.Succeed = 0
 		return resp, datastruct.GetDataFailed
 	}
 	resp.Addr = addr
 	if has {
 		if now_time < gp.StartTime {
+			resp.Succeed = 0
 			resp.Tips = "活动还未开始，请在活动开始后来领取"
 		} else if now_time > gp.EndTime {
+			resp.Succeed = 0
 			resp.Tips = invalid_tips
 		} else {
 			has, err = engine.Where("user_id=? and gold_poster_id=?", userId, gpid).Get(new(datastruct.SaveUserGetGoldPoster))
 			if has {
+				resp.Succeed = 0
 				resp.Tips = "亲，你今天已经领取过了，明天再来吧"
 			} else {
+				resp.Succeed = 1
 				resp.Tips = fmt.Sprintf("恭喜你获得%d个游戏币", gp.GoldCount)
 				session := engine.NewSession()
 				defer session.Close()
@@ -2962,6 +2967,7 @@ func (handle *DBHandler) GetGoldFromPoster(userId int, gpid int, addr string) (i
 				affected, err2 := res.RowsAffected()
 				if err1 != nil || err2 != nil || affected <= 0 {
 					rollbackError("GetGoldFromPoster update AddGoldCount err", session)
+					resp.Succeed = 0
 					resp.Tips = err_tips
 					return resp, datastruct.UpdateDataFailed
 				}
@@ -2974,6 +2980,7 @@ func (handle *DBHandler) GetGoldFromPoster(userId int, gpid int, addr string) (i
 				if err != nil {
 					str := fmt.Sprintf("GetGoldFromPoster Insert GoldChangeInfo :%s", err.Error())
 					rollbackError(str, session)
+					resp.Succeed = 0
 					resp.Tips = err_tips
 					return resp, datastruct.UpdateDataFailed
 				}
@@ -2984,6 +2991,7 @@ func (handle *DBHandler) GetGoldFromPoster(userId int, gpid int, addr string) (i
 				if err != nil {
 					str := fmt.Sprintf("GetGoldFromPoster Insert SaveUserGetGoldPoster :%s", err.Error())
 					rollbackError(str, session)
+					resp.Succeed = 0
 					resp.Tips = err_tips
 					return resp, datastruct.UpdateDataFailed
 				}
@@ -2992,11 +3000,13 @@ func (handle *DBHandler) GetGoldFromPoster(userId int, gpid int, addr string) (i
 					str := fmt.Sprintf("DBHandler->GetGoldFromPoster Commit :%s", err.Error())
 					rollbackError(str, session)
 					resp.Tips = err_tips
+					resp.Succeed = 0
 					return resp, datastruct.UpdateDataFailed
 				}
 			}
 		}
 	} else {
+		resp.Succeed = 0
 		resp.Tips = invalid_tips
 	}
 	return resp, datastruct.NULLError

@@ -1268,20 +1268,26 @@ func (handle *DBHandler) EditServerInfo(version string, isMaintain int) datastru
 	return datastruct.NULLError
 }
 
-func (handle *DBHandler) getAgencyStatisticsWithUsers(users []int) (*datastruct.WebAgencyStatistics, []int) {
-	if users == nil || len(users) <= 0 {
-		statistics := new(datastruct.WebAgencyStatistics)
-		statistics.Count = 0
-		statistics.DepositTotal = 0
-		statistics.PayRushTotal = 0
-		statistics.PurchaseTotal = 0
-		return statistics, nil
+func (handle *DBHandler) getAgencyStatisticsWithUsers(level int, userId int) (*datastruct.WebAgencyStatistics, []int) {
+	// if users == nil || len(users) <= 0 {
+	// 	statistics := new(datastruct.WebAgencyStatistics)
+	// 	statistics.Count = 0
+	// 	statistics.DepositTotal = 0
+	// 	statistics.PayRushTotal = 0
+	// 	statistics.PurchaseTotal = 0
+	// 	return statistics, nil
+	// }
+	var sql string
+	switch level {
+	case 1:
+		sql = "select u.deposit_total,u.pay_rush_total,u.purchase_total from invite_info i inner join user_info u on i.receiver = u.id where i.sender = ?"
+	case 2:
+
+	case 3:
 	}
-	ids_str := getUsersStr(users)
-	inner_str := "from invite_info i inner join user_info u on i.receiver = u.id where i.sender in (" + ids_str + ")"
-	count_sql := "select u.id,u.deposit_total,u.pay_rush_total,u.purchase_total " + inner_str
+
 	engine := handle.mysqlEngine
-	results, _ := engine.Query(count_sql)
+	results, _ := engine.Query(sql)
 
 	var depositTotal int64
 	depositTotal = 0
@@ -1758,29 +1764,31 @@ func computeToday(start int64, end int64, engine *xorm.Engine) (int, int, datast
 }*/
 
 func (handle *DBHandler) MyPrentices(body *datastruct.WebGetAgencyInfoBody) (interface{}, datastruct.CodeType) {
-	statistics1, users1 := handle.getAgencyStatisticsWithUsers([]int{body.UserId})
-	statistics2, users2 := handle.getAgencyStatisticsWithUsers(users1)
-	statistics3, _ := handle.getAgencyStatisticsWithUsers(users2)
-	statistics_list := make([]*datastruct.WebAgencyStatistics, 0, 3)
-	statistics_list = append(statistics_list, statistics1)
-	statistics_list = append(statistics_list, statistics2)
-	statistics_list = append(statistics_list, statistics3)
-	resp := new(datastruct.WebResponseAgencyData)
-	resp.Statistics = statistics_list
+	/*
+		statistics1, users1 := handle.getAgencyStatisticsWithUsers([]int{body.UserId})
+		statistics2, users2 := handle.getAgencyStatisticsWithUsers(users1)
+		statistics3, _ := handle.getAgencyStatisticsWithUsers(users2)
+		statistics_list := make([]*datastruct.WebAgencyStatistics, 0, 3)
+		statistics_list = append(statistics_list, statistics1)
+		statistics_list = append(statistics_list, statistics2)
+		statistics_list = append(statistics_list, statistics3)
+		resp := new(datastruct.WebResponseAgencyData)
+		resp.Statistics = statistics_list
 
-	engine := handle.mysqlEngine
-	switch body.Level {
-	case 1:
-		resp.Users, _, resp.CurrentTotal = getAgencyUser(engine, []int{body.UserId}, false, body)
-	case 2:
-		_, ids, _ := getAgencyUser(engine, []int{body.UserId}, true, nil)
-		resp.Users, _, resp.CurrentTotal = getAgencyUser(engine, ids, false, body)
-	case 3:
-		_, ids1, _ := getAgencyUser(engine, []int{body.UserId}, true, nil)
-		_, ids2, _ := getAgencyUser(engine, ids1, true, nil)
-		resp.Users, _, resp.CurrentTotal = getAgencyUser(engine, ids2, false, body)
-	}
-	return resp, datastruct.NULLError
+		engine := handle.mysqlEngine
+		switch body.Level {
+		case 1:
+			resp.Users, _, resp.CurrentTotal = getAgencyUser(engine, []int{body.UserId}, false, body)
+		case 2:
+			_, ids, _ := getAgencyUser(engine, []int{body.UserId}, true, nil)
+			resp.Users, _, resp.CurrentTotal = getAgencyUser(engine, ids, false, body)
+		case 3:
+			_, ids1, _ := getAgencyUser(engine, []int{body.UserId}, true, nil)
+			_, ids2, _ := getAgencyUser(engine, ids1, true, nil)
+			resp.Users, _, resp.CurrentTotal = getAgencyUser(engine, ids2, false, body)
+		}
+	*/
+	return nil, datastruct.NULLError
 }
 
 func getAgencyUser(engine *xorm.Engine, users []int, isQueryAll bool, body *datastruct.WebGetAgencyInfoBody) ([]*datastruct.WebAgencyUser, []int, int) {

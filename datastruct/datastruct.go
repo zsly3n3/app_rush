@@ -599,8 +599,9 @@ type ResponseAgencyPage struct {
 }
 
 type ResponseGoldFromPoster struct {
-	Tips string `json:"tips"`
-	Addr string `json:"addr"`
+	Tips    string `json:"tips"`
+	Addr    string `json:"addr"`
+	Succeed int    `json:"succeed"`
 }
 
 func ResponseLoginData(u_data *UserInfo) map[string]interface{} {
