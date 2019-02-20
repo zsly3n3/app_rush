@@ -371,7 +371,6 @@ type ResponseAgent struct {
 	NickName    string  `json:"nickname"`
 	CreatedAt   int64   `json:"time"`
 	EarnBalance float64 `json:"balance"`
-	UserId      int     `json:"id"`
 }
 
 type ResponseAgentInfo struct {
