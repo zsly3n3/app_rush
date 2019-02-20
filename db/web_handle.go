@@ -1280,7 +1280,7 @@ func (handle *DBHandler) getAgencyStatisticsWithUsers(level int, userId int) *da
 	}
 
 	engine := handle.mysqlEngine
-	results, _ := engine.Query(sql)
+	results, _ := engine.Query(sql, userId)
 
 	var depositTotal int64
 	depositTotal = 0
