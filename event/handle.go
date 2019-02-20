@@ -240,22 +240,8 @@ func (handle *EventHandler) CommissionInfo(userId int, pageIndex int, pageSize i
 	return handle.dbHandler.CommissionInfo(userId, pageIndex, pageSize)
 }
 
-func (handle *EventHandler) GetAgentlevel1(userId int) (interface{}, datastruct.CodeType) {
-	return handle.dbHandler.GetAgentlevelN(userId, []int{userId})
-}
-
-func (handle *EventHandler) GetAgentlevelN(userId int, c *gin.Context) (interface{}, datastruct.CodeType) {
-	var body datastruct.AgentLevelNBody
-	err := c.BindJSON(&body)
-	var code datastruct.CodeType
-	var rs interface{}
-	if err == nil {
-		rs, code = handle.dbHandler.GetAgentlevelN(userId, body.Ids)
-	} else {
-		code = datastruct.JsonParseFailedFromPostBody
-		rs = nil
-	}
-	return rs, code
+func (handle *EventHandler) GetAgentlevelN(userId int, level int, pageIndex int, pageSize int) (interface{}, datastruct.CodeType) {
+	return handle.dbHandler.GetAgentlevelN(userId, level, pageIndex, pageSize)
 }
 
 func (handle *EventHandler) GetDrawCash(userId int, pageIndex int, pageSize int) (interface{}, datastruct.CodeType) {

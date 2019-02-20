@@ -573,39 +573,25 @@ func commissionInfo(r *gin.Engine, eventHandler *event.EventHandler) {
 	})
 }
 
-func getAgentlevel1(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.GET("/app/user/agentlevel1", func(c *gin.Context) {
-		if !checkVersion(c, eventHandler) {
-			return
-		}
-		userId, _, tf := checkToken(c, eventHandler)
-		if !tf {
-			return
-		}
-		data, code := eventHandler.GetAgentlevel1(userId)
-		if code == datastruct.NULLError {
-			c.JSON(200, gin.H{
-				"code": code,
-				"data": data,
-			})
-		} else {
-			c.JSON(200, gin.H{
-				"code": code,
-			})
-		}
-	})
-}
-
 func getAgentlevelN(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.POST("/app/user/agentleveln", func(c *gin.Context) {
+	r.GET("/app/user/agentleveln/:level/:pageindex/:pagesize", func(c *gin.Context) {
 		if !checkVersion(c, eventHandler) {
+			return
+		}
+		level := tools.StringToInt(c.Param("level"))
+		pageIndex := tools.StringToInt(c.Param("pageindex"))
+		pageSize := tools.StringToInt(c.Param("pagesize"))
+		if level <= 0 || level > 3 || pageIndex <= 0 || pageSize <= 0 {
+			c.JSON(200, gin.H{
+				"code": datastruct.ParamError,
+			})
 			return
 		}
 		userId, _, tf := checkToken(c, eventHandler)
 		if !tf {
 			return
 		}
-		data, code := eventHandler.GetAgentlevelN(userId, c)
+		data, code := eventHandler.GetAgentlevelN(userId, level, pageIndex, pageSize)
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
 				"code": code,
@@ -1458,7 +1444,6 @@ func Register(r *gin.Engine, eventHandler *event.EventHandler) {
 	applySend(r, eventHandler)
 	commissionRank(r, eventHandler)
 	commissionInfo(r, eventHandler)
-	getAgentlevel1(r, eventHandler)
 	getAgentlevelN(r, eventHandler)
 	getDrawCash(r, eventHandler)
 	getDrawCashRule(r, eventHandler)

@@ -1106,34 +1106,40 @@ func (handle *DBHandler) CommissionInfo(userId int, pageIndex int, pageSize int)
 	return resp, datastruct.NULLError
 }
 
-type agentData struct {
-	datastruct.InviteInfo `xorm:"extends"`
-	datastruct.UserInfo   `xorm:"extends"`
-}
-
-func (handle *DBHandler) GetAgentlevelN(userId int, users []int) (interface{}, datastruct.CodeType) {
+func (handle *DBHandler) GetAgentlevelN(userId int, level int, pageIndex int, pageSize int) (interface{}, datastruct.CodeType) {
 	engine := handle.mysqlEngine
-	arr := make([]*agentData, 0)
+	start := (pageIndex - 1) * pageSize
+	limit := pageSize
 
-	err := engine.Table("invite_info").Join("INNER", "user_info", "invite_info.receiver = user_info.id").In("sender", users).Desc("invite_info.created_at").Limit(100, 0).Find(&arr)
+	var sql string
+	switch level {
+	case 1:
+		sql = "select u.id,u.avatar,u.nick_name,u.created_at from invite_info i join user_info u on i.receiver=u.id where i.sender = ? order by i.created_at desc LIMIT ?,?"
+	case 2:
+		sql = "select u.id,u.avatar,u.nick_name,u.created_at from invite_info i join user_info u on i.receiver=u.id where i.sender in (select u.id from invite_info i join user_info u on i.receiver=u.id where i.sender = ?) order by i.created_at desc LIMIT ?,?"
+	case 3:
+		sql = "select u.id,u.avatar,u.nick_name,u.created_at from invite_info i join user_info u on i.receiver=u.id where i.sender in (select u.id from invite_info i join user_info u on i.receiver=u.id where i.sender in (select u.id from invite_info i join user_info u on i.receiver=u.id where i.sender = ?)) order by i.created_at desc LIMIT ?,?"
+	}
+	results, err := engine.Query(sql, userId, start, limit)
+
 	if err != nil {
-		log.Error("getAgentlevelN join :%s", err.Error())
+		log.Error("getAgentlevel_%d join :%s", level, err.Error())
 		return nil, datastruct.GetDataFailed
 	}
 	resp := new(datastruct.ResponseAgentInfo)
 	list := make([]*datastruct.ResponseAgent, 0)
-	for _, v := range arr {
+	for _, v := range results {
 		agent := new(datastruct.ResponseAgent)
-		agent.Avatar = v.Avatar
-		agent.NickName = v.NickName
-		agent.UserId = v.UserInfo.Id
+		agent.Avatar = string(v["avatar"][:])
+		agent.CreatedAt = tools.StringToInt64(string(v["created_at"][:]))
+		agent.NickName = string(v["nick_name"][:])
+		receiver_id := tools.StringToInt(string(v["id"][:]))
 		balanceInfo := new(datastruct.BalanceInfo)
-		total, err := engine.Where("from_user_id = ? and to_user_id = ?", v.UserInfo.Id, userId).Sum(balanceInfo, "earn_balance")
+		total, err := engine.Where("from_user_id = ? and to_user_id = ?", receiver_id, userId).Sum(balanceInfo, "earn_balance")
 		if err != nil {
-			log.Error("getAgentlevelN Sum :%s", err.Error())
+			log.Error("getAgentlevel_%d Sum :%s", level, err.Error())
 			return nil, datastruct.GetDataFailed
 		}
-		agent.CreatedAt = v.InviteInfo.CreatedAt
 		agent.EarnBalance = total
 		list = append(list, agent)
 	}
