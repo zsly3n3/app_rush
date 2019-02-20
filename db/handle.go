@@ -2975,7 +2975,7 @@ func (handle *DBHandler) GetRandomLotteryList() (interface{}, datastruct.CodeTyp
 	}
 	list := make([]string, 0, len(results))
 	for _, v := range results {
-		list = append(list, tools.CreateGoodsImgUrl(string(v["img_name"][:]))
+		list = append(list, tools.CreateGoodsImgUrl(string(v["img_name"][:])))
 	}
 	return list, datastruct.NULLError
 }
