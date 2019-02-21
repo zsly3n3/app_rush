@@ -43,9 +43,8 @@ func (handle *DBHandler) GetUserDataFromDataBase(userId int) *datastruct.UserInf
 	engine := handle.mysqlEngine
 	u_info := new(datastruct.UserInfo)
 	engine.Where("id=?", userId).Get(u_info)
-	u_info.Token = tools.UniqueId()
 	sql := "update user_info set login_time = ? , token = ?  where id = ?"
-	engine.Exec(sql, time.Now().Unix(), userId)
+	engine.Exec(sql, time.Now().Unix(), tools.UniqueId(), userId)
 	return u_info
 }
 
