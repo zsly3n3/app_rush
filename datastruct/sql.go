@@ -569,6 +569,7 @@ type SaveUserGetGoldPoster struct {
 }
 
 type TmpTest struct {
-	Id     int `xorm:"not null pk autoincr COMMENT(自增编号) INT(11)"`
-	UserId int `xorm:"not null COMMENT(用户编号) INT(11)"`
+	Id       int    `xorm:"not null pk autoincr COMMENT(自增编号) INT(11)"`
+	UserId   int    `xorm:"not null COMMENT(用户编号) INT(11)"`
+	UserName string `xorm:"VARCHAR(100) not null COMMENT(Name)"`
 }
