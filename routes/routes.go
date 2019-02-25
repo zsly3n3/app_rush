@@ -1447,7 +1447,7 @@ func getRandomLotteryList(r *gin.Engine, eventHandler *event.EventHandler) {
 }
 
 func getAgentCount(r *gin.Engine, eventHandler *event.EventHandler) {
-	r.GET("/app/agentcount", func(c *gin.Context) {
+	r.GET("/app/user/agentcount", func(c *gin.Context) {
 		if !checkVersion(c, eventHandler) {
 			return
 		}
