@@ -568,7 +568,7 @@ type SaveUserGetGoldPoster struct {
 	GoldPosterId int `xorm:"not null INT(11)"`
 }
 
-type TmpTest struct {
-	Id     int `xorm:"not null pk autoincr INT(11) COMMENT('自增编号')"`
-	UserId int `xorm:"not null INT(11) COMMENT('用户编号')"`
-}
+// type TmpTest struct {
+// 	Id     int `xorm:"not null pk autoincr INT(11) COMMENT('自增编号')"`
+// 	UserId int `xorm:"not null INT(11) COMMENT('用户编号')"`
+// }

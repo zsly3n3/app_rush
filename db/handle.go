@@ -1105,6 +1105,30 @@ func (handle *DBHandler) CommissionInfo(userId int, pageIndex int, pageSize int)
 	return resp, datastruct.NULLError
 }
 
+func (handle *DBHandler) GetAgentCount(userId int) (interface{}, datastruct.CodeType) {
+	engine := handle.mysqlEngine
+	max_level := 3
+	total_arr := make([]int, 0, max_level)
+	for i := 1; i <= max_level; i++ {
+		var sql string
+		switch i {
+		case 1:
+			sql = "select count(*) from invite_info i join user_info u on i.receiver=u.id where i.sender = ?"
+		case 2:
+			sql = "select count(*) from invite_info i join user_info u on i.receiver=u.id where i.sender in (select u.id from invite_info i join user_info u on i.receiver=u.id where i.sender = ?)"
+		case 3:
+			sql = "select count(*) from invite_info i join user_info u on i.receiver=u.id where i.sender in (select u.id from invite_info i join user_info u on i.receiver=u.id where i.sender in (select u.id from invite_info i join user_info u on i.receiver=u.id where i.sender = ?))"
+		}
+		results, err := engine.Query(sql, userId)
+		if err != nil {
+			return nil, datastruct.GetDataFailed
+		}
+		total_str := string(results[0]["count(*)"][:])
+		total_arr = append(total_arr, tools.StringToInt(total_str))
+	}
+	return total_arr, datastruct.NULLError
+}
+
 func (handle *DBHandler) GetAgentlevelN(userId int, level int, pageIndex int, pageSize int) (interface{}, datastruct.CodeType) {
 	engine := handle.mysqlEngine
 	start := (pageIndex - 1) * pageSize
