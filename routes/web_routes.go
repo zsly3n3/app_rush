@@ -155,10 +155,10 @@ func webGetGoods(r *gin.Engine, eventHandler *event.EventHandler) {
 func getDomain(r *gin.Engine, eventHandler *event.EventHandler) {
 	url := "/web/domain"
 	r.GET(url, func(c *gin.Context) {
-		_, tf := checkPermission(c, url, eventHandler)
-		if !tf {
-			return
-		}
+		// _, tf := checkPermission(c, url, eventHandler)
+		// if !tf {
+		// 	return
+		// }
 		data, code := eventHandler.GetDomain()
 		if code == datastruct.NULLError {
 			c.JSON(200, gin.H{
