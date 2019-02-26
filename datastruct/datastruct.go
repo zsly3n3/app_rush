@@ -436,6 +436,7 @@ type ResponseUserInfo struct {
 	DFHCount     int64           `json:"dfhcount"`
 	YFHCount     int64           `json:"yfhcount"`
 	DPJCount     int64           `json:"dpjCount"`
+	DownLoad     *DownLoadInfo   `json:"download"`
 	RegisterGift *RegisterGift   `json:"registergift"`
 	AppraiseAd   *AppraiseAdInfo `json:"appraisead"`
 }

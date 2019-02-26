@@ -1289,9 +1289,8 @@ func (handle *DBHandler) GetUserInfo(userId int, platform datastruct.Platform) (
 		log.Error("GetUserInfo get DPJCount err:%v", err.Error())
 		return nil, datastruct.GetDataFailed
 	}
-
-	adInfo := new(datastruct.AdInfo)
-	has, err = engine.Where("location=?", datastruct.AppraiseAd).Get(adInfo)
+	adInfo := make([]*datastruct.AdInfo, 0, 2)
+	err = engine.Where("location=? or location =?", datastruct.DownLoadAd, datastruct.AppraiseAd).Asc("location").Find(&adInfo)
 	if err != nil {
 		log.Error("GetUserInfo get AdInfo err:%v", err.Error())
 		return nil, datastruct.GetDataFailed
@@ -1304,8 +1303,17 @@ func (handle *DBHandler) GetUserInfo(userId int, platform datastruct.Platform) (
 		return nil, datastruct.GetDataFailed
 	}
 
+	if platform == datastruct.H5 {
+		download := new(datastruct.DownLoadInfo)
+		download.ImgUrl = osstool.CreateOSSURL(adInfo[0].ImgName)
+		download.Link = ""                //暂时性修改，没有app可供下载
+		download.IsGotDownLoadAppGift = 1 //暂时性修改，没有app可供下载
+		download.GoldCount = gcg.DownLoadAppGoldGift
+		resp.DownLoad = download
+	}
+
 	appraiseAd := new(datastruct.AppraiseAdInfo)
-	appraiseAd.AppraiseAd = osstool.CreateOSSURL(adInfo.ImgName)
+	appraiseAd.AppraiseAd = osstool.CreateOSSURL(adInfo[1].ImgName)
 	appraiseAd.GoldCount = gcg.AppraisedGoldGift
 
 	registerGift := new(datastruct.RegisterGift)
@@ -1323,6 +1331,7 @@ func (handle *DBHandler) GetUserInfo(userId int, platform datastruct.Platform) (
 
 	resp.AppraiseAd = appraiseAd
 	resp.RegisterGift = registerGift
+	log.Error("-------user_info resp:%v", resp.DLQCount)
 	return resp, datastruct.NULLError
 }
 
