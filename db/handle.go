@@ -1254,7 +1254,7 @@ func (handle *DBHandler) GetUserInfo(userId int, platform datastruct.Platform) (
 	user := new(datastruct.UserInfo)
 	has, err := engine.Where("id=?", userId).Get(user)
 	if err != nil || !has {
-		log.Debug("GetUserInfo GetUser err")
+		log.Error("GetUserInfo GetUser err")
 		return nil, datastruct.GetDataFailed
 	}
 	resp := new(datastruct.ResponseUserInfo)
@@ -1268,38 +1268,38 @@ func (handle *DBHandler) GetUserInfo(userId int, platform datastruct.Platform) (
 	orderinfo := new(datastruct.OrderInfo)
 	DLQCount, err = engine.Where("user_id = ? and order_state = 0", userId).Count(orderinfo)
 	if err != nil {
-		log.Debug("GetUserInfo get DLQCount err:%v", err.Error())
+		log.Error("GetUserInfo get DLQCount err:%v", err.Error())
 		return nil, datastruct.GetDataFailed
 	}
 	sendgoods := new(datastruct.SendGoods)
 	DFHCount, err = engine.Join("INNER", "order_info", "order_info.id = send_goods.order_id").Where("user_id=? and send_goods_state = 0", userId).Count(sendgoods)
 	if err != nil {
-		log.Debug("GetUserInfo get DFHCount err:%v", err.Error())
+		log.Error("GetUserInfo get DFHCount err:%v", err.Error())
 		return nil, datastruct.GetDataFailed
 	}
 
 	YFHCount, err = engine.Join("INNER", "order_info", "order_info.id = send_goods.order_id").Where("user_id=? and send_goods_state = 1 and sign_for_state = 0", userId).Count(sendgoods)
 	if err != nil {
-		log.Debug("GetUserInfo get YFHCount err:%v", err.Error())
+		log.Error("GetUserInfo get YFHCount err:%v", err.Error())
 		return nil, datastruct.GetDataFailed
 	}
 
 	DPJCount, err = engine.Join("INNER", "order_info", "order_info.id = send_goods.order_id").Where("user_id=? and send_goods_state = 1 and sign_for_state = 1 and is_appraised = 0", userId).Count(sendgoods)
 	if err != nil {
-		log.Debug("GetUserInfo get DPJCount err:%v", err.Error())
+		log.Error("GetUserInfo get DPJCount err:%v", err.Error())
 		return nil, datastruct.GetDataFailed
 	}
 	adInfo := make([]*datastruct.AdInfo, 0, 2)
 	err = engine.Where("location=? or location =?", datastruct.DownLoadAd, datastruct.AppraiseAd).Asc("location").Find(&adInfo)
 	if err != nil {
-		log.Debug("GetUserInfo get AdInfo err:%v", err.Error())
+		log.Error("GetUserInfo get AdInfo err:%v", err.Error())
 		return nil, datastruct.GetDataFailed
 	}
 
 	gcg := new(datastruct.GoldCoinGift)
 	has, err = engine.Where("id=?", datastruct.DefaultId).Get(gcg)
 	if err != nil || !has {
-		log.Debug("GetUserInfo get GoldCoinGift err")
+		log.Error("GetUserInfo get GoldCoinGift err")
 		return nil, datastruct.GetDataFailed
 	}
 
