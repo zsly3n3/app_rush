@@ -1290,7 +1290,8 @@ func (handle *DBHandler) GetUserInfo(userId int, platform datastruct.Platform) (
 		return nil, datastruct.GetDataFailed
 	}
 	adInfo := make([]*datastruct.AdInfo, 0, 2)
-	err = engine.Where("location=? or location =?", datastruct.DownLoadAd, datastruct.AppraiseAd).Asc("location").Find(&adInfo)
+	//暂时性修改，没有app可供下载
+	err = engine.Where("location=? or location >?", datastruct.AppraiseAd, datastruct.AppraiseAd).Desc("location").Find(&adInfo)
 	if err != nil {
 		log.Error("GetUserInfo get AdInfo err:%v", err.Error())
 		return nil, datastruct.GetDataFailed
