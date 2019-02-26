@@ -1331,7 +1331,7 @@ func (handle *DBHandler) GetUserInfo(userId int, platform datastruct.Platform) (
 
 	resp.AppraiseAd = appraiseAd
 	resp.RegisterGift = registerGift
-	log.Debug("-------user_info resp:%v", resp.DLQCount)
+	log.Error("-------user_info resp:%v", resp.DLQCount)
 	return resp, datastruct.NULLError
 }
 
